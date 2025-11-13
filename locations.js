@@ -35,3 +35,8 @@ function getLocationById(locationId) {
         description: '未知登记点'
     };
 }
+
+// 获取所有地点
+function getAllLocations(){
+    return LOCATIONS;
+}
