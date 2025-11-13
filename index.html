@@ -120,10 +120,12 @@
             color: #7f8c8d;
             font-size: 13px;
         }
-        .field-note {
-            font-size: 12px;
-            color: #7f8c8d;
-            margin-top: 4px;
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+        .form-row .form-group {
+            flex: 1;
         }
         @media (max-width: 480px) {
             .container {
@@ -132,6 +134,10 @@
             }
             .header h1 {
                 font-size: 20px;
+            }
+            .form-row {
+                flex-direction: column;
+                gap: 0;
             }
         }
     </style>
@@ -144,67 +150,63 @@
         </div>
         
         <form id="visitorForm">
-            <!-- 工作单位 -->
             <div class="form-group">
                 <label for="company" class="required">工作单位</label>
                 <input type="text" id="company" name="company" required maxlength="50" placeholder="请输入工作单位名称">
             </div>
             
-            <!-- 姓名 -->
-            <div class="form-group">
-                <label for="name" class="required">姓名</label>
-                <input type="text" id="name" name="name" required maxlength="20" placeholder="请输入真实姓名">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="name" class="required">姓名</label>
+                    <input type="text" id="name" name="name" required maxlength="20" placeholder="请输入姓名">
+                </div>
+                
+                <div class="form-group">
+                    <label for="idCard" class="required">身份证号</label>
+                    <input type="text" id="idCard" name="idCard" required maxlength="18" placeholder="请输入身份证号">
+                </div>
             </div>
             
-            <!-- 身份证号 -->
-            <div class="form-group">
-                <label for="idCard" class="required">身份证号</label>
-                <input type="text" id="idCard" name="idCard" required maxlength="18" placeholder="请输入18位身份证号">
-                <div class="field-note">请准确填写18位身份证号码</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="visitorCount" class="required">到访人数</label>
+                    <input type="number" id="visitorCount" name="visitorCount" required min="1" max="50" value="1" placeholder="人数">
+                </div>
+                
+                <div class="form-group">
+                    <label for="visitTime" class="required">来访时间</label>
+                    <input type="datetime-local" id="visitTime" name="visitTime" required>
+                </div>
             </div>
             
-            <!-- 到访人数 -->
             <div class="form-group">
-                <label for="visitorCount" class="required">到访人数</label>
-                <input type="number" id="visitorCount" name="visitorCount" required min="1" max="50" value="1" placeholder="请输入到访人数">
-                <div class="field-note">包括本人在内的总人数</div>
-            </div>
-            
-            <!-- 来访时间 -->
-            <div class="form-group">
-                <label for="visitTime" class="required">来访时间</label>
-                <input type="datetime-local" id="visitTime" name="visitTime" required>
-                <div class="field-note">请选择计划到访的日期和时间</div>
-            </div>
-            
-            <!-- 来访目的 -->
-            <div class="form-group">
-                <label for="purpose" class="required">来访目的</label>
-                <select id="purpose" name="purpose" required>
+                <label for="visitPurpose" class="required">来访目的</label>
+                <select id="visitPurpose" name="visitPurpose" required>
                     <option value="">请选择来访目的</option>
+                    <option value="业务洽谈">业务洽谈</option>
                     <option value="设备维修">设备维修</option>
-                    <option value="巡检">巡检</option>
+                    <option value="送货">送货</option>
+                    <option value="提货">提货</option>
+                    <option value="面试">面试</option>
+                    <option value="培训">培训</option>
                     <option value="参观学习">参观学习</option>
                     <option value="其他">其他</option>
                 </select>
             </div>
             
-            <!-- 联系方式 -->
-            <div class="form-group">
-                <label for="phone" class="required">联系方式</label>
-                <input type="tel" id="phone" name="phone" required pattern="1[3-9]\d{9}" 
-                       placeholder="请输入11位手机号" maxlength="11">
-                <div class="field-note">请填写可联系的手机号码</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="phone" class="required">联系方式</label>
+                    <input type="tel" id="phone" name="phone" required pattern="1[3-9]\d{9}" 
+                           placeholder="请输入手机号" maxlength="11">
+                </div>
+                
+                <div class="form-group">
+                    <label for="contactPerson" class="required">对接人员</label>
+                    <input type="text" id="contactPerson" name="contactPerson" required maxlength="20" placeholder="请输入对接人姓名">
+                </div>
             </div>
             
-            <!-- 对接人员 -->
-            <div class="form-group">
-                <label for="contactPerson" class="required">对接人员</label>
-                <input type="text" id="contactPerson" name="contactPerson" required maxlength="20" placeholder="请输入对接人员姓名">
-                <div class="field-note">请填写您要拜访的人员姓名</div>
-            </div>
-            
-            <!-- 隐藏字段：自动获取的地点信息 -->
             <input type="hidden" id="location" name="location">
             <input type="hidden" id="locationName" name="locationName">
             
@@ -235,8 +237,10 @@
                 return;
             }
             
-            // 设置地点信息和表单
+            // 设置地点信息
             setupLocation();
+            
+            // 设置表单验证和默认值
             setupForm();
         });
 
@@ -246,24 +250,22 @@
             const locationId = urlParams.get('location') || 'gate';
             const location = getLocationById(locationId);
             
-            // 设置隐藏字段
             document.getElementById('location').value = location.id;
             document.getElementById('locationName').value = location.name;
-            
-            // 显示地点信息
             document.getElementById('locationDisplay').textContent = location.name;
+            
             if (location.description) {
                 document.getElementById('locationDisplay').title = location.description;
             }
         }
 
-        // 设置表单
+        // 设置表单验证和默认值
         function setupForm() {
             // 设置默认来访时间为当前时间
             const now = new Date();
-            // 将时间调整为5分钟后的整数倍，方便用户选择
-            now.setMinutes(Math.ceil(now.getMinutes() / 5) * 5);
-            document.getElementById('visitTime').value = formatDateTimeLocal(now);
+            // 格式化时间为 datetime-local 需要的格式
+            const formattedNow = now.toISOString().slice(0, 16);
+            document.getElementById('visitTime').value = formattedNow;
             
             // 手机号输入验证
             document.getElementById('phone').addEventListener('input', function(e) {
@@ -282,17 +284,6 @@
             });
         }
 
-        // 格式化日期时间为datetime-local输入格式
-        function formatDateTimeLocal(date) {
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            const hours = String(date.getHours()).padStart(2, '0');
-            const minutes = String(date.getMinutes()).padStart(2, '0');
-            
-            return `${year}-${month}-${day}T${hours}:${minutes}`;
-        }
-
         // 显示消息
         function showMessage(message, type) {
             const messageDiv = document.getElementById('message');
@@ -305,26 +296,6 @@
                     messageDiv.style.display = 'none';
                 }, 3000);
             }
-        }
-
-        // 验证身份证号
-        function validateIdCard(idCard) {
-            if (!idCard) return false;
-            
-            // 基本格式验证
-            const pattern = /^[1-9]\d{5}(18|19|20)\d{2}((0[1-9])|(1[0-2]))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/;
-            if (!pattern.test(idCard)) {
-                return false;
-            }
-            
-            // 校验码验证（简化版）
-            return true;
-        }
-
-        // 验证手机号
-        function validatePhone(phone) {
-            const pattern = /^1[3-9]\d{9}$/;
-            return pattern.test(phone);
         }
 
         // 表单提交处理
@@ -345,37 +316,32 @@
                 const formData = new FormData(this);
                 const data = Object.fromEntries(formData);
                 
-                // 字段验证
-                if (!data.company.trim()) {
-                    throw new Error('请输入工作单位');
+                // 验证必填字段
+                const requiredFields = [
+                    { field: 'company', name: '工作单位' },
+                    { field: 'name', name: '姓名' },
+                    { field: 'idCard', name: '身份证号' },
+                    { field: 'visitorCount', name: '到访人数' },
+                    { field: 'visitTime', name: '来访时间' },
+                    { field: 'visitPurpose', name: '来访目的' },
+                    { field: 'phone', name: '联系方式' },
+                    { field: 'contactPerson', name: '对接人员' }
+                ];
+                
+                for (const { field, name } of requiredFields) {
+                    if (!data[field] || !data[field].toString().trim()) {
+                        throw new Error(`请填写${name}`);
+                    }
                 }
                 
-                if (!data.name.trim()) {
-                    throw new Error('请输入姓名');
-                }
-                
-                if (!validateIdCard(data.idCard)) {
-                    throw new Error('请输入正确的身份证号码');
-                }
-                
-                if (!data.visitorCount || data.visitorCount < 1) {
-                    throw new Error('到访人数至少为1人');
-                }
-                
-                if (!data.visitTime) {
-                    throw new Error('请选择来访时间');
-                }
-                
-                if (!data.purpose) {
-                    throw new Error('请选择来访目的');
-                }
-                
-                if (!validatePhone(data.phone)) {
+                // 验证手机号格式
+                if (!/^1[3-9]\d{9}$/.test(data.phone)) {
                     throw new Error('请输入正确的手机号码');
                 }
                 
-                if (!data.contactPerson.trim()) {
-                    throw new Error('请输入对接人员姓名');
+                // 验证身份证号格式（简单验证）
+                if (!/^\d{17}[\dXx]$/.test(data.idCard)) {
+                    throw new Error('请输入正确的身份证号码');
                 }
                 
                 // 获取客户端IP
@@ -395,9 +361,9 @@
                 
                 if (result.success) {
                     showMessage('✅ ' + result.message, 'success');
-                    // 清空表单，但保留地点信息
+                    // 清空表单，但保留地点信息和默认时间
                     this.reset();
-                    setupForm(); // 重新设置表单默认值
+                    setupForm(); // 重新设置默认值
                 } else {
                     throw new Error(result.message);
                 }
