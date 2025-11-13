@@ -182,13 +182,6 @@
             font-size: 16px;
             margin-left: 10px;
         }
-        .record-detail {
-            background: #f8f9fa;
-            padding: 10px;
-            border-radius: 6px;
-            margin-top: 5px;
-            font-size: 13px;
-        }
         @media (max-width: 768px) {
             .header {
                 flex-direction: column;
@@ -226,8 +219,8 @@
                 <div class="stat-label">今日记录</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number" id="lastUpdateTime">--</div>
-                <div class="stat-label">最后更新</div>
+                <div class="stat-number" id="locationCount">0</div>
+                <div class="stat-label">登记地点</div>
             </div>
         </div>
         
@@ -252,7 +245,7 @@
                 
                 <div class="form-group">
                     <label>关键词搜索</label>
-                    <input type="text" id="searchFilter" placeholder="姓名、手机、单位、对接人员">
+                    <input type="text" id="searchFilter" placeholder="姓名、手机、单位">
                 </div>
                 
                 <div class="form-group">
@@ -383,8 +376,118 @@
                     <td>${formatDateTime(record.submitTime)}</td>
                     <td>${escapeHtml(record.company)}</td>
                     <td>${escapeHtml(record.name)}</td>
-                    <td>${formatIdCard(record.idCard)}</td>
-                    <td>${record.visitorCount}人</td>
+                    <td>${escapeHtml(record.idCard)}</td>
+                    <td>${record.visitorCount}</td>
                     <td>${formatDateTime(record.visitTime)}</td>
-                    <td>${escapeHtml(record.purpose)}</td>
-                    <td>${escapeHtml
+                    <td>${escapeHtml(record.visitPurpose)}</td>
+                    <td>${escapeHtml(record.phone)}</td>
+                    <td>${escapeHtml(record.contactPerson)}</td>
+                    <td>${escapeHtml(record.locationName)}</td>
+                </tr>
+            `).join('');
+        }
+        
+        // 更新统计信息
+        async function updateStats() {
+            try {
+                const stats = await getStats();
+                
+                document.getElementById('totalRecords').textContent = stats.totalRecords;
+                document.getElementById('todayRecords').textContent = stats.todayRecords;
+                document.getElementById('locationCount').textContent = stats.locationCount;
+                
+            } catch (error) {
+                console.error('更新统计失败:', error);
+            }
+        }
+        
+        // 更新最后更新时间
+        function updateLastUpdateTime() {
+            const now = new Date();
+            document.getElementById('lastUpdateText').textContent = now.toLocaleString('zh-CN');
+        }
+        
+        // 重置筛选条件
+        function resetFilters() {
+            document.getElementById('locationFilter').value = 'all';
+            document.getElementById('dateFilter').value = '';
+            document.getElementById('searchFilter').value = '';
+            loadData();
+        }
+        
+        // 导出数据
+        function exportData() {
+            // 简单的CSV导出实现
+            const table = document.querySelector('table');
+            let csv = [];
+            
+            // 表头
+            const headers = [];
+            table.querySelectorAll('th').forEach(th => {
+                headers.push(`"${th.textContent}"`);
+            });
+            csv.push(headers.join(','));
+            
+            // 数据行
+            const rows = table.querySelectorAll('tbody tr');
+            if (rows.length === 0 || rows[0].querySelector('.empty-state')) {
+                alert('没有数据可导出');
+                return;
+            }
+            
+            rows.forEach(tr => {
+                const row = [];
+                tr.querySelectorAll('td').forEach(td => {
+                    // 跳过空状态行
+                    if (!td.querySelector('.empty-state') && !td.querySelector('.loading')) {
+                        row.push(`"${td.textContent}"`);
+                    }
+                });
+                if (row.length > 0) {
+                    csv.push(row.join(','));
+                }
+            });
+            
+            // 创建下载链接
+            const blob = new Blob(['\uFEFF' + csv.join('\n')], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `访客记录_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        // 显示错误
+        function showError(message) {
+            const tbody = document.getElementById('recordsBody');
+            tbody.innerHTML = '<tr><td colspan="10" class="empty-state"><div>❌ ' + message + '</div></td></tr>';
+        }
+        
+        // 工具函数：格式化日期时间
+        function formatDateTime(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+        
+        // 工具函数：转义HTML
+        function escapeHtml(unsafe) {
+            if (!unsafe) return '';
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
