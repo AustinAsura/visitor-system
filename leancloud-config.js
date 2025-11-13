@@ -39,7 +39,7 @@ async function submitVisitorInfo(visitorData) {
         record.set('idCard', visitorData.idCard || '');
         record.set('visitorCount', parseInt(visitorData.visitorCount) || 1);
         record.set('visitTime', new Date(visitorData.visitTime));
-        record.set('purpose', visitorData.purpose || '');
+        record.set('visitPurpose', visitorData.visitPurpose || '');
         record.set('phone', visitorData.phone || '');
         record.set('contactPerson', visitorData.contactPerson || '');
         
@@ -118,7 +118,7 @@ async function getVisitorRecords(filters = {}) {
             idCard: record.get('idCard'),
             visitorCount: record.get('visitorCount'),
             visitTime: record.get('visitTime'),
-            purpose: record.get('purpose'),
+            visitPurpose: record.get('visitPurpose'),
             phone: record.get('phone'),
             contactPerson: record.get('contactPerson'),
             location: record.get('location'),
@@ -146,16 +146,21 @@ async function getStats() {
         todayQuery.greaterThanOrEqualTo('submitTime', today);
         const todayCount = await todayQuery.count();
         
+        // 获取所有地点
+        const locations = getAllLocations();
+        
         return {
             totalRecords: totalCount,
-            todayRecords: todayCount
+            todayRecords: todayCount,
+            locationCount: locations.length
         };
         
     } catch (error) {
         console.error('获取统计失败:', error);
         return {
             totalRecords: 0,
-            todayRecords: 0
+            todayRecords: 0,
+            locationCount: 0
         };
     }
 }
