@@ -331,6 +331,8 @@
                 const location = document.getElementById('locationFilter').value;
                 const date = document.getElementById('dateFilter').value;
                 const search = document.getElementById('searchFilter').value;
+
+                console.log('筛选条件:', {location, date, search});
                 
                 // 显示加载状态
                 const tbody = document.getElementById('recordsBody');
@@ -342,6 +344,9 @@
                     date: date,
                     search: search
                 });
+
+                console.log('获取到的记录数量:', records.length);
+                console.log('记录样例:', records[0]);
                 
                 // 显示数据
                 displayRecords(records);
@@ -351,10 +356,99 @@
                 
             } catch (error) {
                 console.error('加载数据失败:', error);
-                showError('加载失败，请刷新重试');
+                showError('加载失败:', error.message);
             }
         }
         
+
+        // 在 leancloud.js 中修复 getVisitorRecords 函数
+        async function getVisitorRecords(filters = {}) {
+            try {
+                const query = new AV.Query('VisitorRecord');
+        
+                console.log('开始查询，筛选条件:', filters);
+        
+            // 应用筛选条件 - 修复地点筛选
+            if (filters.location && filters.location !== 'all') {
+                console.log('应用地点筛选:', filters.location);
+            
+                // 尝试多种可能的字段名称
+                const locationQuery = new AV.Query('VisitorRecord');
+                locationQuery.equalTo('location', filters.location);
+            
+                const locationNameQuery = new AV.Query('VisitorRecord');
+                locationNameQuery.equalTo('locationName', filters.location);
+            
+                // 使用 OR 查询，匹配任意一个字段
+                query._orQuery([locationQuery, locationNameQuery]);
+            }
+        
+            // 日期筛选
+            if (filters.date) {
+                console.log('应用日期筛选:', filters.date);
+                const startDate = new Date(filters.date);
+                const endDate = new Date(startDate);
+                endDate.setDate(endDate.getDate() + 1);
+            
+                query.greaterThanOrEqualTo('createdAt', startDate);
+                query.lessThan('createdAt', endDate);
+            }
+        
+            // 关键词搜索
+            if (filters.search) {
+                console.log('应用关键词搜索:', filters.search);
+                const nameQuery = new AV.Query('VisitorRecord');
+                nameQuery.contains('name', filters.search);
+            
+                const phoneQuery = new AV.Query('VisitorRecord');
+                phoneQuery.contains('phone', filters.search);
+            
+                const companyQuery = new AV.Query('VisitorRecord');
+                companyQuery.contains('company', filters.search);
+            
+                query._orQuery([nameQuery, phoneQuery, companyQuery]);
+            }
+        
+            // 按创建时间倒序排列
+            query.descending('createdAt');
+        
+            // 分页
+            const page = filters.page || 1;
+            const limit = filters.limit || 50;
+            query.limit(limit);
+            query.skip((page - 1) * limit);
+        
+            const records = await query.find();
+            console.log('查询完成，找到记录:', records.length);
+        
+            return records.map(record => {
+                const data = {
+                    id: record.id,
+                    createdAt: record.get('createdAt'),
+                    submitTime: record.get('submitTime') || record.get('createdAt'),
+                    company: record.get('company') || '',
+                    name: record.get('name') || '',
+                    idCard: record.get('idCard') || record.get('id_card') || '',
+                    visitorCount: record.get('visitorCount') || record.get('visitor_count') || 1,
+                    visitTime: record.get('visitTime') || record.get('visit_time'),
+                    visitPurpose: record.get('visitPurpose') || record.get('visit_purpose') || '',
+                    phone: record.get('phone') || '',
+                    contactPerson: record.get('contactPerson') || record.get('contact_person') || '',
+                    location: record.get('location') || '',
+                    locationName: record.get('locationName') || record.get('location_name') || '',
+                    ipAddress: record.get('ipAddress') || record.get('ip_address') || ''
+                };
+            
+                console.log('处理后的记录数据:', data);
+                return data;
+            });
+        
+        } catch (error) {
+            console.error('获取记录失败:', error);
+            return [];
+        }
+    }
+
         // 显示记录
         function displayRecords(records) {
             const tbody = document.getElementById('recordsBody');
