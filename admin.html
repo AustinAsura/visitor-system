@@ -245,7 +245,7 @@
                 
                 <div class="form-group">
                     <label>关键词搜索</label>
-                    <input type="text" id="searchFilter" placeholder="姓名、手机、单位">
+                    <input type="text" id="searchFilter" placeholder="姓名、手机、单位等">
                 </div>
                 
                 <div class="form-group">
@@ -405,8 +405,14 @@
             
                 const companyQuery = new AV.Query('VisitorRecord');
                 companyQuery.contains('company', filters.search);
+
+                const visitPurposeQuery = new AV.Query('VisitorRecord');
+                visitPurposeQuery.contains('visitPurpose', filters.search);
+
+                const contactPersonQuery = new AV.Query('VisitorRecord');
+                contactPersonQuery.contains('contactPerson', filters.search);
             
-                query._orQuery([nameQuery, phoneQuery, companyQuery]);
+                query._orQuery([nameQuery, phoneQuery, companyQuery, visitPurposeQuery, contactPersonQuery]);
             }
         
             // 按创建时间倒序排列
