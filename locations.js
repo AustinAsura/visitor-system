@@ -12,17 +12,17 @@ const LOCATIONS = [
     },
     {
         id: 'Linanerban_1',
-        name: '磷铵二班',
+        name: '磷铵二班一系列',
         description: '磷铵二班一系列'
     },
     {
         id: 'Linanerban_2',
-        name: '磷铵二班',
+        name: '磷铵二班二系列',
         description: '磷铵二班二系列'
     },
     {
         id: 'Liusuanjifang',
-        name: '硫酸一班',
+        name: '硫酸一班机房',
         description: '硫酸一班机房'
     }
 ];
