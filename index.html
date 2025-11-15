@@ -516,16 +516,42 @@
                     throw new Error('请输入正确的身份证号码');
                 }
                 
-                // 获取客户端IP
+                // 获取客户端IP - 使用多个备用服务
                 let ipAddress = '';
                 try {
-                    const ipResponse = await fetch('https://api.ipify.org?format=json');
-                    const ipData = await ipResponse.json();
-                    ipAddress = ipData.ip;
+                    // 尝试多个IP查询服务
+                    const ipServices = [
+                        'https://api.ipify.org?format=json',
+                        'https://api64.ipify.org?format=json',
+                        'https://ipinfo.io/json',
+                        'https://ipapi.co/json/'
+                    ];
+                    
+                    for (const service of ipServices) {
+                        try {
+                            const ipResponse = await fetch(service, { timeout: 3000 });
+                            if (ipResponse.ok) {
+                                const ipData = await ipResponse.json();
+                                // 不同服务的响应格式可能不同
+                                ipAddress = ipData.ip || ipData.query || '';
+                                if (ipAddress) {
+                                    console.log(`从 ${service} 获取到IP: ${ipAddress}`);
+                                    break;
+                                }
+                            }
+                        } catch (serviceError) {
+                            console.warn(`IP服务 ${service} 失败:`, serviceError);
+                            continue;
+                        }
+                    }
+                    
+                    if (!ipAddress) {
+                        console.warn('所有IP查询服务都失败了');
+                    }
                 } catch (ipError) {
                     console.warn('无法获取IP地址:', ipError);
                 }
-                
+
                 data.ipAddress = ipAddress;
 
                 // 处理来访目的
