@@ -161,82 +161,21 @@
             content: " *";
             color: #e74c3c;
         }
-        .location-search-container{
-            position: relative;
-            margin-bottom: 18px;
-        }
-        .location-search-input{
-            width: 100%;
-            padding: 12px 40px 12px 15px;
-            border: 2px solid #e1e5e9;
-            border-radius: 8px;
-            font-size: 16px;
-        }
-        .location-search-inco{
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #7f8c8d;
-        }
-        .location-results{
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: white;
-            border: 2px solid #e1e5e9;
-            border-top: none;
-            border-radius: 0 0 8px 8px;
-            max-height: 200px;
-            overflow-y: auto;
-            z-index: 1000;
-            display: none;
-        }
-        .location-result-item {
-            padding: 12px 15px;
-            cursor: pointer;
-            border-bottom: 1px solid #f0f0f0;
-        }
-        .location-result-item:hover {
-            background: #f8f9fa;
-        }
-        .location-result-item:last-child {
-            border-bottom: none;
-        }
-        .selected-location {
-            background: #e3f2fd;
-            padding: 12px 15px;
-            border-radius: 8px;
-            margin-top: 10px;
-            display: none;
-        }
-        .compact-form .form-group {
-            margin-bottom: 12px;
-        }
-        .compact-form input, 
-        .compact-form select {
-            padding: 10px 12px;
-            font-size: 14px;
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>外来人员访问信息登记系统</h1>
-            <div class="location-info" id="locationDisplay">正在获取地点信息...</div>
-            <div id="loadingStatus" style="display: none; color: #e74c3c; font-size: 14px; margin-top: 5px;">正在加载系统配置...</div>
+            <div class="location-info" id="locationDisplay">地点加载中...</div>
         </div>
         
         <form id="visitorForm">
-            <!-- 工作单位 -->
             <div class="form-group">
                 <label for="company" class="required">工作单位</label>
                 <input type="text" id="company" name="company" required maxlength="50" placeholder="请输入工作单位名称">
             </div>
             
-            <!-- 姓名和身份证号 -->
             <div class="form-row">
                 <div class="form-group">
                     <label for="name" class="required">姓名</label>
@@ -249,7 +188,6 @@
                 </div>
             </div>
             
-            <!-- 到访人数和来访时间 -->
             <div class="form-row">
                 <div class="form-group">
                     <label for="visitorCount" class="required">到访人数</label>
@@ -262,7 +200,6 @@
                 </div>
             </div>
             
-            <!-- 来访目的 -->
             <div class="form-group">
                 <label for="visitPurpose" class="required purpose-required">来访目的</label>
                 <select id="visitPurpose" name="visitPurpose" required>
@@ -275,7 +212,7 @@
                     <option value="其他">其他</option>
                 </select>
 
-                <!-- 其他目的输入框 -->
+                <! -- 其他目的输入框-->
                 <div class="other-purpose-container" id="otherPurposeContainer">
                     <input type="text"
                     id="otherPurpose"
@@ -286,7 +223,6 @@
                 </div>
             </div>
             
-            <!-- 联系方式和对接人员 -->
             <div class="form-row">
                 <div class="form-group">
                     <label for="phone" class="required">联系方式</label>
@@ -300,7 +236,6 @@
                 </div>
             </div>
             
-            <!-- 隐藏字段 -->
             <input type="hidden" id="location" name="location">
             <input type="hidden" id="locationName" name="locationName">
             
@@ -318,48 +253,18 @@
 
     <!-- 引入 LeanCloud SDK -->
     <script src="https://cdn.jsdelivr.net/npm/leancloud-storage@4.13.2/dist/av-min.js"></script>
-    <script src="locations-config.js"></script>
+    <script src="locations.js"></script>
     <script src="leancloud-config.js"></script>
     
     <script>
         // 页面加载完成后初始化
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOMContentLoaded 事件触发');
             // 初始化 LeanCloud
             const initSuccess = initLeanCloud();
             if (!initSuccess) {
                 showMessage('系统初始化失败，请刷新页面重试', 'error');
                 return;
             }
-
-            // 检查 locationManager 是否已加载
-            function initializeApp() {
-                const loadingStatus = document.getElementById('loadingStatus');
-                
-                if (typeof locationManager !== 'undefined') {
-                    console.log('locationManager 已就绪，开始初始化应用');
-                    if (loadingStatus) loadingStatus.style.display = 'none';
-                    setupLocation();
-                    setupForm();
-                    setupVisitPurpose();
-                } else {
-                    console.log('locationManager 未就绪，等待...');
-                    if (loadingStatus) loadingStatus.style.display = 'block';
-                    // 如果等待超过5秒仍无响应，显示错误
-                    setTimeout(function() {
-                        if (typeof locationManager === 'undefined') {
-                            showMessage('系统配置加载超时，请检查网络连接并刷新页面', 'error');
-                            if (loadingStatus) loadingStatus.style.display = 'none';
-                        }
-                    }, 5000);
-                    
-                    // 继续等待
-                    setTimeout(initializeApp, 100);
-                }
-            }
-
-            // 开始初始化
-            initializeApp();
             
             // 设置地点信息
             setupLocation();
@@ -373,43 +278,17 @@
 
         // 设置地点信息
         function setupLocation() {
-            console.log('当前所有可用地点:', Object.keys(locationManager.locations));
-            console.log('URL参数:', Object.fromEntries(new URLSearchParams(window.location.search)));
-            console.log('开始设置地点信息');
-            
-            if (typeof locationManager === 'undefined') {
-                showMessage('错误：系统配置加载失败，请刷新页面', 'error');
-                return;
-            }
-
             const urlParams = new URLSearchParams(window.location.search);
-            let locationId = urlParams.get('location');
-
-            if (!locationId) {
-                showMessage('错误：未指定登记地点，请使用正确的二维码', 'error');
-                return;
+            const locationId = urlParams.get('location') || 'Dianchiyian';
+            const location = getLocationById(locationId);
+            
+            document.getElementById('location').value = location.id;
+            document.getElementById('locationName').value = location.name;
+            document.getElementById('locationDisplay').textContent = location.name;
+            
+            if (location.description) {
+                document.getElementById('locationDisplay').title = location.description;
             }
-
-            locationId = locationId.toString().trim().toLowerCase();
-            // 使用原始ID进行日志记录
-            console.log('获取到地点ID:', locationId);
-            
-            // 使用标准化的ID进行存储
-            const normalizedLocationId = locationManager.getNormalizedLocationId(locationId);
-            const locationName = locationManager.getLocationName(locationId);
-
-            console.log('标准化地点ID:', normalizedLocationId);
-            console.log('对应地点名称:', locationName);
-
-            // 使用标准化ID存储，确保一致性
-            document.getElementById('location').value = normalizedLocationId;
-            document.getElementById('locationName').value = locationName;
-            document.getElementById('locationDisplay').textContent = locationName;
-            
-            // 更新页面标题（如果存在）
-            document.title = locationName + ' - 访客登记';
-            
-            console.log('地点设置完成');
         }
 
         // 设置表单验证和默认值
@@ -434,25 +313,6 @@
             document.getElementById('visitorCount').addEventListener('change', function(e) {
                 if (this.value < 1) this.value = 1;
                 if (this.value > 50) this.value = 50;
-            });
-        }
-
-        // 设置来访目的动态行为
-        function setupVisitPurpose(){
-            const purposeSelect = document.getElementById('visitPurpose');
-            const otherPurposeContainer = document.getElementById('otherPurposeContainer');
-            const otherPurposeInput = document.getElementById('otherPurpose');
-
-            purposeSelect.addEventListener('change', function(){
-                if (this.value === '其他'){
-                    otherPurposeContainer.style.display = 'block';
-                    otherPurposeInput.required = true;
-                    setTimeout(() => otherPurposeInput.focus(), 300);
-                } else {
-                    otherPurposeContainer.style.display = 'none';
-                    otherPurposeInput.required = false;
-                    otherPurposeInput.value = '';
-                }
             });
         }
 
@@ -529,33 +389,23 @@
                 data.ipAddress = ipAddress;
 
                 // 处理来访目的
-                //if (data.visitPurpose === '其他' && data.otherPurpose){
-                //    data.visitPurpose = data.otherPurpose; // 使用手动填写的目的
-                //}
-                if (data.visitPurpose === '其他'){
-                    if (!data.otherPurpose || !data.otherPurpose.trim()){
-                        throw new Error('填写具体来访目的');
-                    }
-                    data.visitPurpose = data.otherPurpose.trim();
+                if (data.visitPurpose === '其他' && data.otherPurpose){
+                    data.visitPurpose = data.otherPurpose; // 使用手动填写的目的
                 }
-                delete data.otherPurpose;
 
                 // 删除不需要的字段
                 delete data.otherPurpose;
                 
                 // 提交到 LeanCloud
-                //const result = await submitVisitorInfo(data);
-                const result = await submitToBackend(data);
+                const result = await submitVisitorInfo(data);
 
-                //console.log('处理后的数据:', data);
+                console.log('处理后的数据:', data);
                 
                 if (result.success) {
                     showMessage('✅ ' + result.message, 'success');
                     // 清空表单，但保留地点信息和默认时间
                     this.reset();
-                    //setupForm(); // 重新设置默认值
-                    setupFormValidation();
-                    setupVisitPurpose();
+                    setupForm(); // 重新设置默认值
                 } else {
                     throw new Error(result.message);
                 }
@@ -570,48 +420,40 @@
             }
         });
 
-        // 提交到后端的函数
-        async function submitToBackend(data){
-            // 使用 LeanCloud
-            try {
-                // 模拟提交
-                await new Promise (resolve => setTimeout(resolve, 1000));
-                return { success: true, message:'提交成功'};
-            } catch (error) {
-                return { success: false, message: error.message};
-            }
-        }
+        // 设置来访目的的动态行为
+        function setupVisitPurpose(){
+            const purposeSelect = document.getElementById('visitPurpose');
+            const otherPurposeContainer = document.getElementById('otherPurposeContainer');
+            const otherPurposeInput = document.getElementById('otherPurpose');
 
-        // 设置表单验证
-        function setupFormValidation(){
-            // 设置默认来访时间为当前时间
-            const now = new Date();
-            const formattedNow = now.toISOString().slice(0, 16);
-            document.getElementById('visitTime').value = formattedNow;
-            
-            // 手机号输入验证
-            document.getElementById('phone').addEventListener('input', function(e) {
-                this.value = this.value.replace(/[^\d]/g, '');
+            // 监听下拉选择变化
+            purposeSelect.addEventListener('change', function(){
+                if (this.value === '其他'){
+                    // 显示其他目的输入框
+                    otherPurposeContainer.style.display = 'block';
+                    otherPurposeInput.required = true;
+                } else {
+                    // 隐藏其他目的输入框
+                    otherPurposeContainer.style.display = 'none';
+                    otherPurposeInput.required = false;
+                    otherPurposeInput.value = ''; //清空输入
+                }
             });
-            
-            // 身份证号输入验证
-            document.getElementById('idCard').addEventListener('input', function(e) {
-                this.value = this.value.replace(/[^0-9Xx]/g, '');
+
+            // 表单提交前验证
+            document.getElementById('visitorForm').addEventListener('submit', function(e){
+                const selectedPurpose = purposeSelect.value;
+                const otherPurposeValue = otherPurposeInput.value.trim();
+
+                // 如果选择了"其他"但没有填写具体目的
+                if (selectedPurpose === '其他' && !otherPurposeValue){
+                    e.preventDefault();
+                    showMessage('请填写具体来访目的', 'error');
+                    otherPurposeInput.focus();
+                    return;
+                }
             });
         }
-
-        // 显示消息
-         function showMessage (message, type){
-            const messageDiv = document.getElementById('message');
-            messageDiv.textContent = message;
-            messageDiv.className = `message ${type}`;
-            messageDiv.style.display = 'block';
-
-            if (type === 'success'){
-                setTimeout(() => messageDiv.style.display = 'none()', 3000);
-            }
-         } 
-
     </script>
 </body>
 </html>
