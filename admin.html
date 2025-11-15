@@ -368,16 +368,34 @@
     
     <script>
 
-        // 配置和全局变量
-        
-        let currentPage = 1;
-        const recordsPerPage = 20;
-        let totalRecords = 0;
-        let currentFilters = {};
-        let allLocations = [];
+        // 全局变量
+    let currentPage = 1;
+    const recordsPerPage = 20;
+    let totalRecords = 0;
+    let currentFilters = {};
+    let allLocations = [];
 
-        // 页面加载完成后初始化
-        document.addEventListener('DOMContentLoaded', function() {
+    // 页面加载完成后初始化
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Admin: DOMContentLoaded 事件触发');
+        
+        // 等待所有资源加载完成
+        function initializeAdmin() {
+            // 检查必要的依赖是否已加载
+            if (typeof AV === 'undefined') {
+                console.log('等待 AV SDK 加载...');
+                setTimeout(initializeAdmin, 100);
+                return;
+            }
+            
+            if (typeof locationManager === 'undefined') {
+                console.log('等待 locationManager 加载...');
+                setTimeout(initializeAdmin, 100);
+                return;
+            }
+
+            console.log('所有依赖已就绪，开始初始化管理后台');
+            
             // 初始化 LeanCloud
             const initSuccess = initLeanCloud();
             if (!initSuccess) {
@@ -385,52 +403,52 @@
                 return;
             }
 
-            // 等待 locationManager 可用
-            function initializeAdmin() {
-                if (typeof locationManager !== 'undefined') {
-                    setupLocationFilter();
-                    loadData();
-                    updateStats();
-                } else {
-                    console.log('locationManager 未就绪，等待...');
-                    setTimeout(initializeAdmin, 100);
-                }
-            }
-
-            // 开始初始化
-            initializeAdmin();
-            
-            // 加载初始数据
-            //loadData();
-            //updateStats();
+            // 设置地点筛选器并加载数据
+            setupLocationFilter();
+            loadData();
+            updateStats();
             
             // 设置自动刷新（每30秒）
-            //setInterval(function() {
-            //    loadData();
-            //    updateStats();
-            //}, 30000);
             setInterval(() => {
                 loadData();
                 updateStats();
             }, 30000);
             
-            绑定搜索框回车事件
+            // 绑定搜索框回车事件
             document.getElementById('searchFilter').addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
                     loadData();
                 }
             });
-        });
+        }
+        
+        // 开始初始化
+        initializeAdmin();
+    });
 
         // 初始化 LeanCloud
-        function initLeanCloud() {
-            try {
-                AV.init(LEANCLOUD_CONFIG);
-                console.log('LeanCloud 初始化成功');
-            } catch (error) {
-                console.error('LeanCloud 初始化失败:', error);
+    function initLeanCloud() {
+        try {
+            // 检查 AV 是否已定义
+            if (typeof AV === 'undefined') {
+                console.error('LeanCloud SDK 未加载');
+                return false;
             }
+            
+            // 使用 leancloud-config.js 中的配置
+            AV.init({
+                appId: 'iVlcwZY4Ujnw9eJFpkh9II9n-gzGzoHsz',
+                appKey: 'jsbPoK06f1ojXGX6eXYkpeCq',
+                serverURL: 'https://ivlcwzy4.lc-cn-n1-shared.com'
+            });
+            
+            console.log('LeanCloud 初始化成功');
+            return true;
+        } catch (error) {
+            console.error('LeanCloud 初始化失败:', error);
+            return false;
         }
+    }
 
         // 设置地点筛选器
         function setupLocationFilter(){
@@ -493,8 +511,8 @@
         // 加载数据
         async function loadData() {
             try {
-                // 获取筛选条件
-                const location = document.getElementById('locationFilter').value;
+                // 获取筛选条件 - 修正这里
+                const location = currentFilters.location || 'all';
                 const date = document.getElementById('dateFilter').value;
                 const search = document.getElementById('searchFilter').value;
 
@@ -506,28 +524,24 @@
                 
                 // 获取数据
                 const records = await getVisitorRecords({
-                    ...currentFilters,
-                    page: currentPage,
-                    limit: recordsPerPage,
                     location: location,
                     date: date,
-                    search: search
+                    search: search,
+                    page: currentPage,
+                    limit: recordsPerPage
                 });
 
                 console.log('获取到的记录数量:', records.length);
-                console.log('记录样例:', records[0]);
                 
                 // 显示数据
                 displayRecords(records);
                 
                 // 更新最后更新时间
                 updateLastUpdateTime();
-
-                
                 
             } catch (error) {
                 console.error('加载数据失败:', error);
-                showError('加载失败:', error.message);
+                showError('加载失败: ' + error.message);
             }
         }
         
@@ -680,9 +694,10 @@
         
         // 重置筛选条件
         function resetFilters() {
-            document.getElementById('locationFilter').value = 'all';
+            document.getElementById('locationFilter').value = '';
             document.getElementById('dateFilter').value = '';
             document.getElementById('searchFilter').value = '';
+            currentFilters = {};
             loadData();
         }
         
@@ -759,6 +774,13 @@
                 .replace(/"/g, "&quot;")
                 .replace(/'/g, "&#039;");
         }
+
+        // 在 initializeAdmin 函数中添加
+        console.log('检查依赖状态:');
+        console.log('- AV:', typeof AV);
+        console.log('- locationManager:', typeof locationManager);
+        console.log('- initLeanCloud:', typeof initLeanCloud);
+        console.log('- getVisitorRecords:', typeof getVisitorRecords);
     </script>
 </body>
 </html>
