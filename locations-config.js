@@ -4,7 +4,7 @@
     'use strict';
 
     // 检查是否已经存在 LocationManager
-    if (window.LocationManager){
+    if (window.locationManager){
         console.warn('LocationManager 已经存在，跳过重复定义');
         return;
     }
@@ -130,6 +130,5 @@
     }
 
     // 创建全局实例
-    window.LocationManager = LocationManager;
     window.locationManager = new LocationManager();
-})
+})();
