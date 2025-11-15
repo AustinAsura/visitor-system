@@ -394,6 +394,23 @@
             loadData();
             updateStats();
 
+            // 等待 locationManager 可用
+    if (typeof locationManager !== 'undefined') {
+        setupLocationFilter();
+        loadData();
+        updateStats();
+    } else {
+        console.error('locationManager 未定义');
+        // 重试机制
+        setTimeout(() => {
+            if (typeof locationManager !== 'undefined') {
+                setupLocationFilter();
+                loadData();
+                updateStats();
+            }
+        }, 100);
+    }
+
             
             // 加载初始数据
             loadData();
@@ -407,7 +424,7 @@
             setInterval(() => {
                 loadData();
                 updateStats();
-            }, 3000);
+            }, 30000);
             
             // 绑定搜索框回车事件
             //document.getElementById('searchFilter').addEventListener('keypress', function(e) {
