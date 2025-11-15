@@ -1,5 +1,4 @@
 // leancloud.js - LeanCloud配置和数据操作
-// 请替换为您的实际配置
 const LEANCLOUD_CONFIG = {
     appId: 'iVlcwZY4Ujnw9eJFpkh9II9n-gzGzoHsz',
     appKey: 'jsbPoK06f1ojXGX6eXYkpeCq',
@@ -146,17 +145,13 @@ async function getStats() {
         todayQuery.greaterThanOrEqualTo('submitTime', today);
         const todayCount = await todayQuery.count();
         
-        // 获取所有地点数量 - 使用 locationManager
-        let locationCount = 0;
-        if (typeof locationManager !== 'undefined') {
-            const locations = locationManager.getAllLocations();
-            locationCount = Object.keys(locations).length;
-        }
+        // 获取所有地点
+        const locations = getAllLocations();
         
         return {
             totalRecords: totalCount,
             todayRecords: todayCount,
-            locationCount: locationCount
+            locationCount: locations.length
         };
         
     } catch (error) {
