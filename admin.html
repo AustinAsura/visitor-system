@@ -182,59 +182,6 @@
             font-size: 16px;
             margin-left: 10px;
         }
-        .location-filter-container {
-            position: relative;
-            min-width: 200px;
-        }
-        .location-search-input {
-            width: 100%;
-            padding: 10px 35px 10px 12px;
-            border: 2px solid #e1e5e9;
-            border-radius: 8px;
-            font-size: 14px;
-        }
-        .location-dropdown {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: white;
-            border: 2px solid #e1e5e9;
-            border-top: none;
-            border-radius: 0 0 8px 8px;
-            max-height: 300px;
-            overflow-y: auto;
-            z-index: 1000;
-            display: none;
-        }
-        .location-option {
-            padding: 10px 12px;
-            cursor: pointer;
-            border-bottom: 1px solid #f0f0f0;
-        }
-        .location-option:hover {
-            background: #f8f9fa;
-        }
-        .location-option.selected {
-            background: #e3f2fd;
-        }
-        .location-group {
-            background: #f8f9fa;
-            padding: 8px 12px;
-            font-weight: 600;
-            color: #2c3e50;
-            border-bottom: 1px solid #e1e5e9;
-        }
-        .pagination-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 20px;
-        }
-        .page-info {
-            color: #7f8c8d;
-            font-size: 14px;
-        }
         @media (max-width: 768px) {
             .header {
                 flex-direction: column;
@@ -281,19 +228,14 @@
             <div class="filter-row">
                 <div class="form-group">
                     <label>地点筛选</label>
-                    <!-- <select id="locationFilter">
+                    <select id="locationFilter">
                         <option value="all">全部地点</option>
                         <option value="Dianchiyian">电池一铵IO室</option>
                         <option value="Liananyiban">磷铵一班IO室</option>
                         <option value="Linanerban_1">磷铵二班一系列</option>
                         <option value="Linanerban_2">磷铵二班二系列</option>
                         <option value="Liusuanjifang">硫酸一班机房</option>
-                    </select> -->
-                    <input type="text" id="locationSearch" class="location-search-input" placeholder="搜索地点..." autocomplete="off">
-                    <div class="location-dropdown" id="locationDropdown">
-                        <div class="location-option" data-value="all">全部地点</div>
-                        <!-- 地点选项将通过JavaScript动态生成 -->
-                    </div>
+                    </select>
                 </div>
                 
                 <div class="form-group">
@@ -342,74 +284,34 @@
                 </tbody>
             </table>
         </div>
-
-        <div class="pagination-controls">
-            <div class="page-info" id="pageInfo">
-                显示第 1-20 条，共 0 条记录
-            </div>
-            <div>
-                <button class="btn btn-secondary" onclick="previousPage()" id="prevBtn" disabled>上一页</button>
-                <button class="btn" onclick="nextPage()" id="nextBtn" disabled>下一页</button>
-            </div>
-        </div>
         
         <div class="last-update">
             最后更新: <span id="lastUpdateText">--</span>
             <button class="refresh-btn" onclick="loadData()" title="刷新数据">🔄</button>
         </div>
     </div>
-    
 
     <!-- 引入 LeanCloud SDK -->
     <script src="https://cdn.jsdelivr.net/npm/leancloud-storage@4.13.2/dist/av-min.js"></script>
-    <!-- 引入地点管理 -->
-    <script src="locations-config.js"></script>
+    <script src="locations.js"></script>
     <script src="leancloud-config.js"></script>
     
     <script>
-
-        // 全局变量
-    let currentPage = 1;
-    const recordsPerPage = 20;
-    let totalRecords = 0;
-    let currentFilters = {};
-    let allLocations = [];
-
-    // 页面加载完成后初始化
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('Admin: DOMContentLoaded 事件触发');
-        
-        // 等待所有资源加载完成
-        function initializeAdmin() {
-            // 检查必要的依赖是否已加载
-            if (typeof AV === 'undefined') {
-                console.log('等待 AV SDK 加载...');
-                setTimeout(initializeAdmin, 100);
-                return;
-            }
-            
-            if (typeof locationManager === 'undefined') {
-                console.log('等待 locationManager 加载...');
-                setTimeout(initializeAdmin, 100);
-                return;
-            }
-
-            console.log('所有依赖已就绪，开始初始化管理后台');
-            
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
             // 初始化 LeanCloud
             const initSuccess = initLeanCloud();
             if (!initSuccess) {
                 showError('系统初始化失败，请刷新页面重试');
                 return;
             }
-
-            // 设置地点筛选器并加载数据
-            setupLocationFilter();
+            
+            // 加载初始数据
             loadData();
             updateStats();
             
             // 设置自动刷新（每30秒）
-            setInterval(() => {
+            setInterval(function() {
                 loadData();
                 updateStats();
             }, 30000);
@@ -420,99 +322,13 @@
                     loadData();
                 }
             });
-        }
-        
-        // 开始初始化
-        initializeAdmin();
-    });
-
-        // 初始化 LeanCloud
-    function initLeanCloud() {
-        try {
-            // 检查 AV 是否已定义
-            if (typeof AV === 'undefined') {
-                console.error('LeanCloud SDK 未加载');
-                return false;
-            }
-            
-            // 使用 leancloud-config.js 中的配置
-            AV.init({
-                appId: 'iVlcwZY4Ujnw9eJFpkh9II9n-gzGzoHsz',
-                appKey: 'jsbPoK06f1ojXGX6eXYkpeCq',
-                serverURL: 'https://ivlcwzy4.lc-cn-n1-shared.com'
-            });
-            
-            console.log('LeanCloud 初始化成功');
-            return true;
-        } catch (error) {
-            console.error('LeanCloud 初始化失败:', error);
-            return false;
-        }
-    }
-
-        // 设置地点筛选器
-        function setupLocationFilter(){
-            const locationSearch = document.getElementById('locationSearch');
-            const locationDropdown = document.getElementById('locationDropdown');
-            
-            // 获取所有地点
-            allLocations = Object.entries(locationManager.getAllLocations());
-            
-            // 渲染地点选项
-            renderLocationOptions('');
-            
-            // 搜索功能
-            locationSearch.addEventListener('input', function() {
-                renderLocationOptions(this.value);
-                locationDropdown.style.display = 'block';
-            });
-
-            // 点击选项
-            locationDropdown.addEventListener('click', function(e) {
-                if (e.target.classList.contains('location-option')) {
-                    const value = e.target.getAttribute('data-value');
-                    // 使用标准化的地点ID
-                    const normalizedValue = locationManager.getNormalizedLocationId(value);
-                    locationSearch.value = value === 'all' ? '' : locationManager.getLocationName(normalizedValue);
-                    currentFilters.location = normalizedValue;
-                    locationDropdown.style.display = 'none';
-                    loadData();
-                }
-            });
-
-            // 点击外部关闭下拉框
-            document.addEventListener('click', function(e) {
-                if (!locationSearch.contains(e.target) && !locationDropdown.contains(e.target)) {
-                    locationDropdown.style.display = 'none';
-                }
-            });
-        }
-
-        // 渲染地点选项
-        function renderLocationOptions(searchTerm) {
-            const locationDropdown = document.getElementById('locationDropdown');
-            let html = '<div class="location-option" data-value="all">全部地点</div>';
-            
-            const filteredLocations = allLocations.filter(([id, name]) => 
-                name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                id.toLowerCase().includes(searchTerm.toLowerCase())
-            );
-            
-            // 按名称排序
-            filteredLocations.sort((a, b) => a[1].localeCompare(b[1]));
-            
-            filteredLocations.forEach(([id, name]) => {
-                html += `<div class="location-option" data-value="${id}">${name}</div>`;
-            });
-            
-            locationDropdown.innerHTML = html;
-        }
+        });
         
         // 加载数据
         async function loadData() {
             try {
-                // 获取筛选条件 - 修正这里
-                const location = currentFilters.location || 'all';
+                // 获取筛选条件
+                const location = document.getElementById('locationFilter').value;
                 const date = document.getElementById('dateFilter').value;
                 const search = document.getElementById('searchFilter').value;
 
@@ -526,12 +342,11 @@
                 const records = await getVisitorRecords({
                     location: location,
                     date: date,
-                    search: search,
-                    page: currentPage,
-                    limit: recordsPerPage
+                    search: search
                 });
 
                 console.log('获取到的记录数量:', records.length);
+                console.log('记录样例:', records[0]);
                 
                 // 显示数据
                 displayRecords(records);
@@ -541,7 +356,7 @@
                 
             } catch (error) {
                 console.error('加载数据失败:', error);
-                showError('加载失败: ' + error.message);
+                showError('加载失败:', error.message);
             }
         }
         
@@ -694,10 +509,9 @@
         
         // 重置筛选条件
         function resetFilters() {
-            document.getElementById('locationFilter').value = '';
+            document.getElementById('locationFilter').value = 'all';
             document.getElementById('dateFilter').value = '';
             document.getElementById('searchFilter').value = '';
-            currentFilters = {};
             loadData();
         }
         
@@ -774,13 +588,6 @@
                 .replace(/"/g, "&quot;")
                 .replace(/'/g, "&#039;");
         }
-
-        // 在 initializeAdmin 函数中添加
-        console.log('检查依赖状态:');
-        console.log('- AV:', typeof AV);
-        console.log('- locationManager:', typeof locationManager);
-        console.log('- initLeanCloud:', typeof initLeanCloud);
-        console.log('- getVisitorRecords:', typeof getVisitorRecords);
     </script>
 </body>
 </html>
