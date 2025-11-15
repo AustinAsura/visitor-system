@@ -65,8 +65,7 @@ window.locationManager = {
         'shengchanshuichang': '生产水厂主控室',
 
         // 硫磷综合楼
-        'liusuanerban': '硫酸二班I/O室',
-        'linsuanerban': '磷酸二班I/O室',
+        'liulinjifang': '硫磷综合楼机房',
     },
 
     // 根据ID获取地点名称（支持大小写不敏感）
