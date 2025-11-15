@@ -369,11 +369,6 @@
     <script>
 
         // 配置和全局变量
-        const LEANCLOUD_CONFIG = {
-            appId: 'iVlcwZY4Ujnw9eJFpkh9II9n',
-            appKey: 'jsbPoK06f1ojXGX6eXYkpeCq',
-            serverURL: 'https://ivlcwzy4.lc-cn-n1-shared.com'
-        };
         
         let currentPage = 1;
         const recordsPerPage = 20;
@@ -384,37 +379,30 @@
         // 页面加载完成后初始化
         document.addEventListener('DOMContentLoaded', function() {
             // 初始化 LeanCloud
-            //const initSuccess = initLeanCloud();
-            //if (!initSuccess) {
-            //    showError('系统初始化失败，请刷新页面重试');
-            //    return;
-            //}
-            initLeanCloud();
-            setupLocationFilter();
-            loadData();
-            updateStats();
+            const initSuccess = initLeanCloud();
+            if (!initSuccess) {
+                showError('系统初始化失败，请刷新页面重试');
+                return;
+            }
 
             // 等待 locationManager 可用
-    if (typeof locationManager !== 'undefined') {
-        setupLocationFilter();
-        loadData();
-        updateStats();
-    } else {
-        console.error('locationManager 未定义');
-        // 重试机制
-        setTimeout(() => {
-            if (typeof locationManager !== 'undefined') {
-                setupLocationFilter();
-                loadData();
-                updateStats();
+            function initializeAdmin() {
+                if (typeof locationManager !== 'undefined') {
+                    setupLocationFilter();
+                    loadData();
+                    updateStats();
+                } else {
+                    console.log('locationManager 未就绪，等待...');
+                    setTimeout(initializeAdmin, 100);
+                }
             }
-        }, 100);
-    }
 
+            // 开始初始化
+            initializeAdmin();
             
             // 加载初始数据
-            loadData();
-            updateStats();
+            //loadData();
+            //updateStats();
             
             // 设置自动刷新（每30秒）
             //setInterval(function() {
@@ -426,12 +414,12 @@
                 updateStats();
             }, 30000);
             
-            // 绑定搜索框回车事件
-            //document.getElementById('searchFilter').addEventListener('keypress', function(e) {
-            //    if (e.key === 'Enter') {
-            //        loadData();
-            //    }
-            //});
+            绑定搜索框回车事件
+            document.getElementById('searchFilter').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    loadData();
+                }
+            });
         });
 
         // 初始化 LeanCloud
