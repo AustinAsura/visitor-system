@@ -465,8 +465,10 @@
             locationDropdown.addEventListener('click', function(e) {
                 if (e.target.classList.contains('location-option')) {
                     const value = e.target.getAttribute('data-value');
-                    locationSearch.value = value === 'all' ? '' : locationManager.getLocationName(value);
-                    currentFilters.location = value;
+                    // 使用标准化的地点ID
+                    const normalizedValue = locationManager.getNormalizedLocationId(value);
+                    locationSearch.value = value === 'all' ? '' : locationManager.getLocationName(normalizedValue);
+                    currentFilters.location = normalizedValue;
                     locationDropdown.style.display = 'none';
                     loadData();
                 }
