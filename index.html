@@ -295,8 +295,16 @@
         function setupForm() {
             // 设置默认来访时间为当前时间
             const now = new Date();
+
+            // 修正时区问题，获取本地时间字符串
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hour = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+
             // 格式化时间为 datetime-local 需要的格式
-            const formattedNow = now.toISOString().slice(0, 16);
+            const formattedNow = `${year}-${month}-${day}T${hours}:${minutes}`;
             document.getElementById('visitTime').value = formattedNow;
             
             // 手机号输入验证
