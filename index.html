@@ -322,6 +322,23 @@
     <script src="leancloud-config.js"></script>
     
     <script>
+        // 检查网络连接状态
+        async function checkConnection() {
+            try {
+                // 检查 LeanCloud 连接
+                const TestObject = AV.Object.extend('TestObject');
+                const testObject = new TestObject();
+                testObject.set('test', 'connection_test');
+                await testObject.save();
+                await testObject.destroy(); // 清理测试对象
+                console.log('LeanCloud 连接正常');
+                return true;
+            } catch (error) {
+                console.error('LeanCloud 连接失败:', error);
+                return false;
+            }
+        }
+
         // 页面加载完成后初始化
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOMContentLoaded 事件触发');
@@ -331,6 +348,13 @@
                 showMessage('系统初始化失败，请刷新页面重试', 'error');
                 return;
             }
+
+            // 检查连接状态
+            checkConnection().then(connected => {
+                if (!connected) {
+                    showMessage('网络连接异常，请检查网络后重试', 'error');
+                }
+            });
 
             // 检查 locationManager 是否已加载
             function initializeApp() {
@@ -564,14 +588,13 @@
                     }
                     data.visitPurpose = data.otherPurpose.trim();
                 }
-                delete data.otherPurpose;
 
                 // 删除不需要的字段
                 delete data.otherPurpose;
                 
                 // 提交到 LeanCloud
                 //const result = await submitVisitorInfo(data);
-                const result = await submitToBackend(data);
+                //const result = await submitToBackend(data);
 
                 //console.log('处理后的数据:', data);
                 
@@ -597,16 +620,73 @@
         });
 
         // 提交到后端的函数
-        async function submitToBackend(data){
+        //async function submitToBackend(data){
             // 使用 LeanCloud
-            try {
+        //    try {
                 // 模拟提交
-                await new Promise (resolve => setTimeout(resolve, 1000));
-                return { success: true, message:'提交成功'};
-            } catch (error) {
-                return { success: false, message: error.message};
-            }
+        //        await new Promise (resolve => setTimeout(resolve, 1000));
+        //        return { success: true, message:'提交成功'};
+        //    } catch (error) {
+        //        return { success: false, message: error.message};
+        //    }
+        //}
+
+        // 提交访客信息
+async function submitVisitorInfo(visitorData) {
+    try {
+        console.log('开始提交数据到LeanCloud...');
+        console.log('提交的数据:', visitorData);
+        
+        if (!AV) {
+            console.error('LeanCloud SDK未加载');
+            throw new Error('LeanCloud SDK未加载');
         }
+
+        const VisitorRecord = AV.Object.extend('VisitorRecord');
+        const record = new VisitorRecord();
+        
+        // 设置必填字段
+        record.set('company', visitorData.company || '');
+        record.set('name', visitorData.name || '');
+        record.set('idCard', visitorData.idCard || '');
+        record.set('visitorCount', parseInt(visitorData.visitorCount) || 1);
+        record.set('visitTime', new Date(visitorData.visitTime));
+        record.set('visitPurpose', visitorData.visitPurpose || '');
+        record.set('phone', visitorData.phone || '');
+        record.set('contactPerson', visitorData.contactPerson || '');
+        
+        // 自动获取的字段
+        record.set('location', visitorData.location || '');
+        record.set('locationName', visitorData.locationName || '');
+        record.set('ipAddress', visitorData.ipAddress || '');
+        record.set('submitTime', new Date());
+        
+        console.log('LeanCloud记录对象准备完成:', record);
+        
+        // 保存到LeanCloud
+        console.log('开始保存到LeanCloud...');
+        const result = await record.save();
+        console.log('LeanCloud保存成功:', result);
+        
+        return {
+            success: true,
+            message: '信息提交成功！',
+            recordId: result.id
+        };
+        
+    } catch (error) {
+        console.error('提交到LeanCloud失败:', error);
+        console.error('错误详情:', {
+            message: error.message,
+            code: error.code,
+            stack: error.stack
+        });
+        return {
+            success: false,
+            message: '提交失败: ' + (error.message || '网络错误')
+        };
+    }
+}
 
         // 设置表单验证
         function setupFormValidation(){
