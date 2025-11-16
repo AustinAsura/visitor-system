@@ -521,10 +521,10 @@
                 try {
                     // 尝试多个IP查询服务
                     const ipServices = [
+                        'https://ipapi.co/json/',
                         'https://api.ipify.org?format=json',
                         'https://api64.ipify.org?format=json',
                         'https://ipinfo.io/json',
-                        'https://ipapi.co/json/'
                     ];
                     
                     for (const service of ipServices) {
