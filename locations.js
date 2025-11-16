@@ -1,29 +1,239 @@
-// locations.js - 5个地点配置
+// locations.js - 地点配置
 const LOCATIONS = [
     {
-        id: 'Dianchiyian',
-        name: '电池一铵',
-        description: '电池一铵IO室'
+        id: 'bangongloujifang',
+        name: '办公楼机房',
+        description: '办公楼机房'
     },
     {
-        id: 'Liananyiban',
-        name: '磷铵一班', 
-        description: '磷铵一班IO室'
+        id: 'linanyiban_dianchiyian',
+        name: '电池一铵', 
+        description: '电池一铵'
     },
     {
-        id: 'Linanerban_1',
+        id: 'linanyiban_a',
+        name: '磷铵一班A系列',
+        description: '磷铵一班A系列'
+    },
+    {
+        id: 'linanyiban_b',
+        name: '磷铵一班B系列',
+        description: '磷铵一班B系列'
+    },
+    {
+        id: 'linanerban_1',
         name: '磷铵二班一系列',
         description: '磷铵二班一系列'
     },
     {
-        id: 'Linanerban_2',
+        id: 'linanerban_2',
         name: '磷铵二班二系列',
         description: '磷铵二班二系列'
     },
     {
-        id: 'Liusuanjifang',
+        id: 'linansanban',
+        name: '30万吨', 
+        description: '30万吨'
+    },
+    {
+        id: 'linanerban_guanqu',
+        name: '磷铵二班浓酸罐区',
+        description: '磷铵二班浓酸罐区'
+    },
+    {
+        id: 'linansiban_1',
+        name: '磷铵四班一系列',
+        description: '磷铵四班一系列'
+    },
+    {
+        id: 'linansiban_2',
+        name: '磷铵四班二系列',
+        description: '磷铵四班二系列'
+    },
+    {
+        id: 'linansiban_guanqu',
+        name: '磷铵四班浓酸罐区',
+        description: '磷铵四班浓酸罐区'
+    },
+    {
+        id: 'gonganban',
+        name: '供氨班氨站', 
+        description: '供氨班氨站'
+    },
+    {
+        id: 'liusuanyiban_yurefadian12',
+        name: '余热发电1#2#机组',
+        description: '余热发电1#2#机组'
+    },
+    {
+        id: 'liusuanyiban_yurefadian3',
+        name: '余热发电3#机组',
+        description: '余热发电3#机组'
+    },
+    {
+        id: 'liusuanyiban_ab',
+        name: '硫酸一班AB套',
+        description: '硫酸一班AB套'
+    },
+    {
+        id: 'liusuanyiban_abfengji',
+        name: '硫酸一班AB套风机房',
+        description: '硫酸一班AB套风机房'
+    },
+    {
+        id: 'liusuanyiban_c',
+        name: '硫酸一班C套', 
+        description: '硫酸一班C套'
+    },
+    {
+        id: 'laorongliu',
+        name: '老熔硫',
+        description: '老熔硫'
+    },
+    {
+        id: 'zhiliuban',
+        name: '制硫班',
+        description: '制硫班'
+    },
+    {
+        id: 'liusuanyiban_jifang',
         name: '硫酸一班机房',
         description: '硫酸一班机房'
+    },
+    {
+        id: 'liusuanerban_yurefadian',
+        name: '硫酸二班余热发电',
+        description: '硫酸二班余热发电'
+    },
+    {
+        id: 'liusuanerban_yuyafadian',
+        name: '硫酸二班余压发电', 
+        description: '硫酸二班余压发电'
+    },
+    {
+        id: 'liusuanerban_xunhuanshui',
+        name: '硫酸二班循环水',
+        description: '硫酸二班循环水'
+    },
+    {
+        id: 'liusuanerban_ab',
+        name: '硫酸二班AB套',
+        description: '硫酸二班AB套'
+    },
+    {
+        id: 'liusuanerban_abfengji',
+        name: '硫酸二班AB套风机房',
+        description: '硫酸二班AB套风机房'
+    },
+    {
+        id: 'liusuanerban_guanqu',
+        name: '硫酸二班稀酸罐区',
+        description: '硫酸二班稀酸罐区'
+    },
+    {
+        id: 'linsuanyiban_nongsuo1',
+        name: '磷酸一班浓缩一', 
+        description: '磷酸一班浓缩一'
+    },
+    {
+        id: 'linsuanyiban_nongsuo2',
+        name: '磷酸一班浓缩二',
+        description: '磷酸一班浓缩二'
+    },
+    {
+        id: 'fuyan',
+        name: '氟盐',
+        description: '氟盐'
+    },
+    {
+        id: 'linsuanyiban_jifang',
+        name: '磷酸一班机房',
+        description: '磷酸一班机房'
+    },
+    {
+        id: 'linsuanyiban_gh',
+        name: '磷酸一班浓缩GH套',
+        description: '磷酸一班浓缩GH套'
+    },
+    {
+        id: 'linsuanyiban_guolv1',
+        name: '磷酸一班过滤一', 
+        description: '磷酸一班过滤一'
+    },
+    {
+        id: 'linsuanyiban_guolv2',
+        name: '磷酸一班过滤二',
+        description: '磷酸一班过滤二'
+    },
+    {
+        id: 'linsuanyiban_dianhuishou',
+        name: '碘回收',
+        description: '碘回收'
+    },
+    {
+        id: 'linsuanerban_guolv12',
+        name: '磷酸二班过滤一二',
+        description: '磷酸二班过滤一二'
+    },
+    {
+        id: 'linsuanerban_nongsuo1',
+        name: '磷酸二班浓缩一',
+        description: '磷酸二班浓缩一'
+    },
+    {
+        id: 'linsuanerban_nongsuo2',
+        name: '磷酸二班浓缩二', 
+        description: '磷酸二班浓缩二'
+    },
+    {
+        id: 'yuanliao_1',
+        name: '原料一',
+        description: '原料一'
+    },
+    {
+        id: 'fuxuan',
+        name: '浮选',
+        description: '浮选'
+    },
+    {
+        id: 'yuanliao_2',
+        name: '原料二',
+        description: '原料二'
+    },
+    {
+        id: 'taociguolv_3',
+        name: '三期陶瓷过滤',
+        description: '三期陶瓷过滤'
+    },
+    {
+        id: 'tuoyanshui',
+        name: '脱盐水',
+        description: '脱盐水'
+    },
+    {
+        id: 'tuoyanshui_reshuifadian',
+        name: '脱盐水热水发电',
+        description: '脱盐水热水发电'
+    },
+    {
+        id: 'dcp',
+        name: 'DCP',
+        description: 'DCP'
+    },
+    {
+        id: 'xinwushuizhan',
+        name: '新污水站',
+        description: '新污水站'
+    },
+    {
+        id: 'shengchanshuichang',
+        name: '生产水厂',
+        description: '生产水厂'
+    },
+    {
+        id: 'liulinjifang',
+        name: '硫磷综合楼机房',
+        description: '硫磷综合楼机房'
     }
 ];
 
