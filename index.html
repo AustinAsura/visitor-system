@@ -322,23 +322,6 @@
     <script src="leancloud-config.js"></script>
     
     <script>
-        // 检查网络连接状态
-        async function checkConnection() {
-            try {
-                // 检查 LeanCloud 连接
-                const TestObject = AV.Object.extend('TestObject');
-                const testObject = new TestObject();
-                testObject.set('test', 'connection_test');
-                await testObject.save();
-                await testObject.destroy(); // 清理测试对象
-                console.log('LeanCloud 连接正常');
-                return true;
-            } catch (error) {
-                console.error('LeanCloud 连接失败:', error);
-                return false;
-            }
-        }
-
         // 页面加载完成后初始化
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOMContentLoaded 事件触发');
