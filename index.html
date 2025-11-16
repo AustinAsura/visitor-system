@@ -569,10 +569,10 @@
                 delete data.otherPurpose;
                 
                 // 提交到 LeanCloud
-                //const result = await submitVisitorInfo(data);
+                const result = await submitVisitorInfo(data);
                 //const result = await submitToBackend(data);
 
-                //console.log('处理后的数据:', data);
+                console.log('处理后的数据:', data);
                 
                 if (result.success) {
                     showMessage('✅ ' + result.message, 'success');
