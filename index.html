@@ -332,13 +332,6 @@
                 return;
             }
 
-            // 检查连接状态
-            checkConnection().then(connected => {
-                if (!connected) {
-                    showMessage('网络连接异常，请检查网络后重试', 'error');
-                }
-            });
-
             // 检查 locationManager 是否已加载
             function initializeApp() {
                 const loadingStatus = document.getElementById('loadingStatus');
