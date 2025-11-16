@@ -304,7 +304,7 @@
             const minutes = String(now.getMinutes()).padStart(2, '0');
             
             // 格式化时间为 datetime-local 需要的格式
-            const formattedNow = '${year}-${month}-${day}T${hours}:${minutes}';
+            const formattedNow = `${year}-${month}-${day}T${hours}:${minutes}`;
             document.getElementById('visitTime').value = formattedNow;
             
             // 手机号输入验证
