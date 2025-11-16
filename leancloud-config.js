@@ -145,17 +145,13 @@ async function getStats() {
         todayQuery.greaterThanOrEqualTo('submitTime', today);
         const todayCount = await todayQuery.count();
         
-        // 获取所有地点数量 - 使用 locationManager
-        let locationCount = 0;
-        if (typeof locationManager !== 'undefined') {
-            const locations = locationManager.getAllLocations();
-            locationCount = Object.keys(locations).length;
-        }
+        // 获取所有地点
+        const locations = getAllLocations();
         
         return {
             totalRecords: totalCount,
             todayRecords: todayCount,
-            locationCount: locationCount
+            locationCount: locations.length
         };
         
     } catch (error) {
