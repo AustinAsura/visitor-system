@@ -391,16 +391,42 @@
         // 设置地点信息
         function setupLocation() {
             const urlParams = new URLSearchParams(window.location.search);
-            const locationId = urlParams.get('location') || 'Dianchiyian';
+            const locationId = urlParams.get('location');
+            
+            if (!locationId) {
+                console.error('未找到location参数');
+                document.getElementById('locationDisplay').textContent = '参数错误：未找到地点信息';
+                document.getElementById('locationDisplay').style.color = 'red';
+                return;
+            }
+            
             const location = getLocationById(locationId);
             
+            if (location.id === 'unknown') {
+                console.error('未知地点ID:', locationId);
+                document.getElementById('locationDisplay').textContent = '参数错误：未知地点';
+                document.getElementById('locationDisplay').style.color = 'red';
+                return;
+            }
+            
+            // 设置地点信息
             document.getElementById('location').value = location.id;
             document.getElementById('locationName').value = location.name;
             document.getElementById('locationDisplay').textContent = location.name;
+
+            // 设置对接人员信息（自动填写且不可更改）
+            document.getElementById('contactPerson').value = location.contactPerson || '管理员';
+            document.getElementById('contactPerson').readOnly = true;
+
+            // 存储对接人员电话用于弹窗显示
+            document.getElementById('contactPerson').setAttribute('data-contact-phone', location.contactPhone || '00000000000');
             
             if (location.description) {
                 document.getElementById('locationDisplay').title = location.description;
             }
+            
+            console.log('成功设置地点:', location.name);
+            console.log('对接人员:', location.contactPerson, '联系电话:', location.contactPhone);
         }
 
         // 设置表单验证和默认值
@@ -543,7 +569,6 @@
 
                     // 显示成功弹窗
                     showSuccessModal(contactPerson, contactPhone);
-                    //showMessage('✅ ' + result.message, 'success');
                     // 清空表单，但保留地点信息和默认时间
                     this.reset();
                     setupForm(); // 重新设置默认值
