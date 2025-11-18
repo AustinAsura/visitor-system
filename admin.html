@@ -182,43 +182,6 @@
             font-size: 14px;
             font-weight: 500;
         }
-        
-        /* 选项卡样式 */
-        .tabs {
-            display: flex;
-            background: white;
-            border-radius: 12px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            overflow: hidden;
-        }
-        .tab {
-            padding: 15px 25px;
-            cursor: pointer;
-            font-weight: 600;
-            color: #7f8c8d;
-            transition: all 0.3s;
-            border-bottom: 3px solid transparent;
-        }
-        .tab.active {
-            color: #3498db;
-            border-bottom-color: #3498db;
-            background: #f8fafc;
-        }
-        .tab:hover:not(.active) {
-            background: #f8fafc;
-            color: #5a6c7d;
-        }
-        
-        /* 内容面板 */
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-        }
-        
-        /* 筛选区域 */
         .filters { 
             background: white; 
             padding: 20px; 
@@ -285,14 +248,6 @@
         .btn-success:hover { 
             background: #27ae60; 
         }
-        .btn-danger { 
-            background: #e74c3c; 
-        }
-        .btn-danger:hover { 
-            background: #c0392b; 
-        }
-        
-        /* 表格容器 */
         .table-container {
             background: white;
             border-radius: 12px;
@@ -321,34 +276,6 @@
         tr:hover { 
             background: #f8f9fa; 
         }
-        .action-buttons {
-            display: flex;
-            gap: 8px;
-        }
-        .action-btn {
-            padding: 6px 10px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-            transition: all 0.2s;
-        }
-        .edit-btn {
-            background: #3498db;
-            color: white;
-        }
-        .edit-btn:hover {
-            background: #2980b9;
-        }
-        .delete-btn {
-            background: #e74c3c;
-            color: white;
-        }
-        .delete-btn:hover {
-            background: #c0392b;
-        }
-        
-        /* 加载和空状态 */
         .loading {
             text-align: center;
             padding: 40px;
@@ -373,8 +300,7 @@
             font-size: 16px;
             margin-left: 10px;
         }
-        
-        /* 可点击的统计卡片样式 */
+        /* 添加可点击的统计卡片样式 */
         .stat-card.clickable {
             cursor: pointer;
             transition: all 0.3s ease;
@@ -386,75 +312,6 @@
         .stat-card.clickable:active {
             transform: translateY(-1px);
         }
-        
-        /* 模态框样式 */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            backdrop-filter: blur(5px);
-        }
-        .modal-content {
-            background-color: white;
-            margin: 5% auto;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            width: 90%;
-            max-width: 600px;
-            animation: modalSlideIn 0.3s ease-out;
-        }
-        @keyframes modalSlideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #e1e5e9;
-        }
-        .modal-title {
-            font-size: 20px;
-            font-weight: 600;
-            color: #2c3e50;
-        }
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: #7f8c8d;
-            transition: color 0.3s;
-        }
-        .close-btn:hover {
-            color: #e74c3c;
-        }
-        .modal-body {
-            margin-bottom: 25px;
-        }
-        .modal-form .form-group {
-            margin-bottom: 20px;
-        }
-        .modal-footer {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-        }
-        
         @media (max-width: 768px) {
             .header {
                 flex-direction: column;
@@ -474,13 +331,6 @@
             }
             .logo {
                 height: 50px;
-            }
-            .tabs {
-                flex-wrap: wrap;
-            }
-            .tab {
-                flex: 1;
-                text-align: center;
             }
         }
     </style>
@@ -543,239 +393,127 @@
                 </div>
             </div>
             
-            <!-- 选项卡导航 -->
-            <div class="tabs">
-                <div class="tab active" data-tab="visitor-records">访客记录</div>
-                <div class="tab" data-tab="location-management">地点管理</div>
-                <div class="tab" data-tab="user-management">用户管理</div>
-            </div>
-            
-            <!-- 访客记录选项卡内容 -->
-            <div class="tab-content active" id="visitor-records">
-                <div class="filters">
-                    <div class="filter-row">
-                        <div class="form-group">
-                            <label>地点筛选</label>
-                            <select id="locationFilter">
-                                <option value="all">全部地点</option>
-                                <!-- 地点选项将通过JavaScript动态填充 -->
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>日期筛选</label>
-                            <input type="date" id="dateFilter">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>关键词搜索</label>
-                            <input type="text" id="searchFilter" placeholder="姓名、手机、单位等">
-                        </div>
-                        
-                        <div class="form-group">
-                            <button class="btn" onclick="loadData()">
-                                <span>🔍</span> 搜索
-                            </button>
-                            <button class="btn btn-secondary" onclick="resetFilters()">
-                                <span>🔄</span> 重置
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>登记时间</th>
-                                <th>工作单位</th>
-                                <th>姓名</th>
-                                <th>身份证号</th>
-                                <th>到访人数</th>
-                                <th>来访时间</th>
-                                <th>来访目的</th>
-                                <th>联系方式</th>
-                                <th>对接人员</th>
-                                <th>登记地点</th>
-                            </tr>
-                        </thead>
-                        <tbody id="recordsBody">
-                            <tr>
-                                <td colspan="10" class="loading">
-                                    <div>加载中...</div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                
-                <div class="last-update">
-                    最后更新: <span id="lastUpdateText">--</span>
-                    <button class="refresh-btn" onclick="loadData()" title="刷新数据">🔄</button>
-                </div>
-            </div>
-            
-            <!-- 地点管理选项卡内容 -->
-            <div class="tab-content" id="location-management">
-                <div class="filters">
-                    <div class="filter-row">
-                        <div class="form-group">
-                            <button class="btn btn-success" onclick="showAddLocationModal()">
-                                <span>➕</span> 添加地点
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>地点ID</th>
-                                <th>地点名称</th>
-                                <th>地点描述</th>
-                                <th>对接人员</th>
-                                <th>联系电话</th>
-                                <th>操作</th>
-                            </tr>
-                        </thead>
-                        <tbody id="locationsBody">
-                            <tr>
-                                <td colspan="6" class="loading">
-                                    <div>加载中...</div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            
-            <!-- 用户管理选项卡内容 -->
-            <div class="tab-content" id="user-management">
-                <div class="filters">
-                    <div class="filter-row">
-                        <div class="form-group">
-                            <button class="btn btn-success" onclick="showAddUserModal()">
-                                <span>➕</span> 添加用户
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="table-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>用户名</th>
-                                <th>姓名</th>
-                                <th>权限级别</th>
-                                <th>创建时间</th>
-                                <th>操作</th>
-                            </tr>
-                        </thead>
-                        <tbody id="usersBody">
-                            <tr>
-                                <td colspan="5" class="loading">
-                                    <div>加载中...</div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 添加/编辑地点模态框 -->
-    <div id="locationModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title" id="locationModalTitle">添加地点</h2>
-                <button class="close-btn" onclick="closeLocationModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form class="modal-form" id="locationForm">
+            <div class="filters">
+                <div class="filter-row">
                     <div class="form-group">
-                        <label for="locationId">地点ID</label>
-                        <input type="text" id="locationId" name="locationId" required placeholder="请输入地点ID（英文）">
-                    </div>
-                    <div class="form-group">
-                        <label for="locationName">地点名称</label>
-                        <input type="text" id="locationName" name="locationName" required placeholder="请输入地点名称">
-                    </div>
-                    <div class="form-group">
-                        <label for="locationDescription">地点描述</label>
-                        <input type="text" id="locationDescription" name="locationDescription" placeholder="请输入地点描述">
-                    </div>
-                    <div class="form-group">
-                        <label for="locationContactPerson">对接人员</label>
-                        <input type="text" id="locationContactPerson" name="locationContactPerson" required placeholder="请输入对接人员姓名">
-                    </div>
-                    <div class="form-group">
-                        <label for="locationContactPhone">联系电话</label>
-                        <input type="tel" id="locationContactPhone" name="locationContactPhone" required placeholder="请输入联系电话">
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeLocationModal()">取消</button>
-                <button class="btn" id="saveLocationBtn" onclick="saveLocation()">保存</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 添加/编辑用户模态框 -->
-    <div id="userModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title" id="userModalTitle">添加用户</h2>
-                <button class="close-btn" onclick="closeUserModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form class="modal-form" id="userForm">
-                    <div class="form-group">
-                        <label for="username">用户名</label>
-                        <input type="text" id="userUsername" name="username" required placeholder="请输入用户名">
-                    </div>
-                    <div class="form-group">
-                        <label for="password">密码</label>
-                        <input type="password" id="userPassword" name="password" required placeholder="请输入密码">
-                    </div>
-                    <div class="form-group">
-                        <label for="name">姓名</label>
-                        <input type="text" id="userName" name="name" required placeholder="请输入姓名">
-                    </div>
-                    <div class="form-group">
-                        <label for="role">权限级别</label>
-                        <select id="userRole" name="role" required>
-                            <option value="admin">管理员</option>
-                            <option value="manager">管理用户</option>
+                        <label>地点筛选</label>
+                        <select id="locationFilter">
+                            <option value="all">全部地点</option>
+                            <option value="bangongloujifang">办公楼机房</option>
+                            <option value="linanyiban_dianchiyian">电池一铵</option>
+                            <option value="linanyiban_a">磷铵一班A系列</option>
+                            <option value="linanyiban_b">磷铵一班B系列</option>
+                            <option value="linanerban_1">磷铵二班一系列</option>
+                            <option value="linanerban_2">磷铵二班二系列</option>
+                            <option value="linansanban">30万吨</option>
+                            <option value="linanerban_guanqu">磷铵二班浓酸罐区</option>
+                            <option value="linansiban_1">磷铵四班一系列</option>
+                            <option value="linansiban_2">磷铵四班二系列</option>
+                            <option value="linansiban_guanqu">磷铵四班浓酸罐区</option>
+                            <option value="gonganban">供氨班氨站</option>
+                            <option value="liusuanyiban_yurefadian12">余热发电1#2#机组</option>
+                            <option value="liusuanyiban_yurefadian3">余热发电3#机组</option>
+                            <option value="liusuanyiban_ab">硫酸一班AB套</option>
+                            <option value="liusuanyiban_abfengji">硫酸一班AB套风机房</option>
+                            <option value="liusuanyiban_c">硫酸一班C套</option>
+                            <option value="laorongliu">老熔硫</option>
+                            <option value="zhiliuban">制硫班</option>
+                            <option value="liusuanyiban_jifang">硫酸一班机房</option>
+                            <option value="liusuanerban_yurefadian">硫酸二班余热发电</option>
+                            <option value="liusuanerban_yuyafadian">硫酸二班余压发电</option>
+                            <option value="liusuanerban_xunhuanshui">硫酸二班循环水</option>
+                            <option value="liusuanerban_ab">硫酸二班AB套</option>
+                            <option value="liusuanerban_abfengji">硫酸二班AB套风机房</option>
+                            <option value="liusuanerban_guanqu">硫酸二班稀酸罐区</option>
+                            <option value="linsuanyiban_nongsuo1">磷酸一班浓缩一</option>
+                            <option value="linsuanyiban_nongsuo2">磷酸一班浓缩二</option>
+                            <option value="fuyan">氟盐</option>
+                            <option value="linsuanyiban_jifang">磷酸一班机房</option>
+                            <option value="linsuanyiban_gh">磷酸一班浓缩GH套</option>
+                            <option value="linsuanyiban_guolv1">磷酸一班过滤一</option>
+                            <option value="linsuanyiban_guolv2">磷酸一班过滤二</option>
+                            <option value="linsuanyiban_dianhuishou">碘回收</option>
+                            <option value="linsuanerban_guolv12">磷酸二班过滤一二</option>
+                            <option value="linsuanerban_nongsuo1">磷酸二班浓缩一</option>
+                            <option value="linsuanerban_nongsuo2">磷酸二班浓缩二</option>
+                            <option value="yuanliao_1">原料一</option>
+                            <option value="fuxuan">浮选</option>
+                            <option value="yuanliao_2">原料二</option>
+                            <option value="taociguolv_3">三期陶瓷过滤</option>
+                            <option value="tuoyanshui">脱盐水</option>
+                            <option value="tuoyanshui_reshuifadian">脱盐水热水发电</option>
+                            <option value="dcp">DCP</option>
+                            <option value="xinwushuizhan">新污水站</option>
+                            <option value="shengchanshuichang">生产水厂</option>
+                            <option value="liulinjifang">硫磷综合楼机房</option>
                         </select>
                     </div>
-                </form>
+                    
+                    <div class="form-group">
+                        <label>日期筛选</label>
+                        <input type="date" id="dateFilter">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>关键词搜索</label>
+                        <input type="text" id="searchFilter" placeholder="姓名、手机、单位等">
+                    </div>
+                    
+                    <div class="form-group">
+                        <button class="btn" onclick="loadData()">
+                            <span>🔍</span> 搜索
+                        </button>
+                        <button class="btn btn-secondary" onclick="resetFilters()">
+                            <span>🔄</span> 重置
+                        </button>
+                    </div>
+                </div>
             </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeUserModal()">取消</button>
-                <button class="btn" id="saveUserBtn" onclick="saveUser()">保存</button>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>登记时间</th>
+                            <th>工作单位</th>
+                            <th>姓名</th>
+                            <th>身份证号</th>
+                            <th>到访人数</th>
+                            <th>来访时间</th>
+                            <th>来访目的</th>
+                            <th>联系方式</th>
+                            <th>对接人员</th>
+                            <th>登记地点</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recordsBody">
+                        <tr>
+                            <td colspan="10" class="loading">
+                                <div>加载中...</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="last-update">
+                最后更新: <span id="lastUpdateText">--</span>
+                <button class="refresh-btn" onclick="loadData()" title="刷新数据">🔄</button>
             </div>
         </div>
     </div>
 
     <!-- 引入 LeanCloud SDK -->
     <script src="https://cdn.jsdelivr.net/npm/leancloud-storage@4.13.2/dist/av-min.js"></script>
+    <script src="locations.js"></script>
     <script src="leancloud-config.js"></script>
     
     <script>
         // 用户管理配置
         const ADMIN_USERS = [
-            { username: 'admin', password: 'admin123', name: '系统管理员', role: 'admin' },
-            { username: 'manager', password: 'manager123', name: '管理用户', role: 'manager' }
+            { username: 'admin', password: 'admin123', name: '系统管理员' },
+            { username: 'manager', password: 'manager123', name: '管理用户' }
         ];
-        
-        // 当前编辑的地点ID
-        let editingLocationId = null;
-        // 当前编辑的用户名
-        let editingUsername = null;
         
         // 页面加载完成后初始化
         document.addEventListener('DOMContentLoaded', function() {
@@ -786,34 +524,6 @@
             document.getElementById('loginForm').addEventListener('submit', function(e) {
                 e.preventDefault();
                 login();
-            });
-            
-            // 绑定选项卡切换事件
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.addEventListener('click', function() {
-                    // 移除所有活动状态
-                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                    
-                    // 设置当前选项卡为活动状态
-                    this.classList.add('active');
-                    const tabId = this.getAttribute('data-tab');
-                    document.getElementById(tabId).classList.add('active');
-                    
-                    // 根据选项卡加载相应数据
-                    if (tabId === 'location-management') {
-                        loadLocations();
-                    } else if (tabId === 'user-management') {
-                        loadUsers();
-                    }
-                });
-            });
-            
-            // 绑定搜索框回车事件
-            document.getElementById('searchFilter').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    loadData();
-                }
             });
         });
         
@@ -856,13 +566,19 @@
             // 加载初始数据
             loadData();
             updateStats();
-            loadLocationOptions();
             
             // 设置自动刷新（每30秒）
             setInterval(function() {
                 loadData();
                 updateStats();
             }, 30000);
+            
+            // 绑定搜索框回车事件
+            document.getElementById('searchFilter').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    loadData();
+                }
+            });
         }
         
         // 登录功能
@@ -978,6 +694,100 @@
             }
         }
         
+        // 在 leancloud.js 中修复 getVisitorRecords 函数
+        async function getVisitorRecords(filters = {}) {
+            try {
+                const query = new AV.Query('VisitorRecord');
+        
+                console.log('开始查询，筛选条件:', filters);
+        
+            // 应用筛选条件 - 修复地点筛选
+            if (filters.location && filters.location !== 'all') {
+                console.log('应用地点筛选:', filters.location);
+            
+                // 尝试多种可能的字段名称
+                const locationQuery = new AV.Query('VisitorRecord');
+                locationQuery.equalTo('location', filters.location);
+            
+                const locationNameQuery = new AV.Query('VisitorRecord');
+                locationNameQuery.equalTo('locationName', filters.location);
+            
+                // 使用 OR 查询，匹配任意一个字段
+                query._orQuery([locationQuery, locationNameQuery]);
+            }
+        
+            // 日期筛选
+            if (filters.date) {
+                console.log('应用日期筛选:', filters.date);
+                const startDate = new Date(filters.date);
+                const endDate = new Date(startDate);
+                endDate.setDate(endDate.getDate() + 1);
+            
+                query.greaterThanOrEqualTo('createdAt', startDate);
+                query.lessThan('createdAt', endDate);
+            }
+        
+            // 关键词搜索
+            if (filters.search) {
+                console.log('应用关键词搜索:', filters.search);
+                const nameQuery = new AV.Query('VisitorRecord');
+                nameQuery.contains('name', filters.search);
+            
+                const phoneQuery = new AV.Query('VisitorRecord');
+                phoneQuery.contains('phone', filters.search);
+            
+                const companyQuery = new AV.Query('VisitorRecord');
+                companyQuery.contains('company', filters.search);
+
+                const visitPurposeQuery = new AV.Query('VisitorRecord');
+                visitPurposeQuery.contains('visitPurpose', filters.search);
+
+                const contactPersonQuery = new AV.Query('VisitorRecord');
+                contactPersonQuery.contains('contactPerson', filters.search);
+            
+                query._orQuery([nameQuery, phoneQuery, companyQuery, visitPurposeQuery, contactPersonQuery]);
+            }
+        
+            // 按创建时间倒序排列
+            query.descending('createdAt');
+        
+            // 分页
+            const page = filters.page || 1;
+            const limit = filters.limit || 50;
+            query.limit(limit);
+            query.skip((page - 1) * limit);
+        
+            const records = await query.find();
+            console.log('查询完成，找到记录:', records.length);
+        
+            return records.map(record => {
+                const data = {
+                    id: record.id,
+                    createdAt: record.get('createdAt'),
+                    submitTime: record.get('submitTime') || record.get('createdAt'),
+                    company: record.get('company') || '',
+                    name: record.get('name') || '',
+                    idCard: record.get('idCard') || record.get('id_card') || '',
+                    visitorCount: record.get('visitorCount') || record.get('visitor_count') || 1,
+                    visitTime: record.get('visitTime') || record.get('visit_time'),
+                    visitPurpose: record.get('visitPurpose') || record.get('visit_purpose') || '',
+                    phone: record.get('phone') || '',
+                    contactPerson: record.get('contactPerson') || record.get('contact_person') || '',
+                    location: record.get('location') || '',
+                    locationName: record.get('locationName') || record.get('location_name') || '',
+                    ipAddress: record.get('ipAddress') || record.get('ip_address') || ''
+                };
+            
+                console.log('处理后的记录数据:', data);
+                return data;
+            });
+        
+        } catch (error) {
+            console.error('获取记录失败:', error);
+            return [];
+        }
+    }
+
         // 显示记录
         function displayRecords(records) {
             const tbody = document.getElementById('recordsBody');
@@ -1073,307 +883,6 @@
         function showError(message) {
             const tbody = document.getElementById('recordsBody');
             tbody.innerHTML = '<tr><td colspan="10" class="empty-state"><div>❌ ' + message + '</div></td></tr>';
-        }
-        
-        // 加载地点选项
-        async function loadLocationOptions() {
-            try {
-                const locations = await getLocations();
-                const locationFilter = document.getElementById('locationFilter');
-                
-                // 清空现有选项（保留"全部地点"）
-                while (locationFilter.children.length > 1) {
-                    locationFilter.removeChild(locationFilter.lastChild);
-                }
-                
-                // 添加地点选项
-                locations.forEach(location => {
-                    const option = document.createElement('option');
-                    option.value = location.id;
-                    option.textContent = location.name;
-                    locationFilter.appendChild(option);
-                });
-                
-            } catch (error) {
-                console.error('加载地点选项失败:', error);
-            }
-        }
-        
-        // 加载地点列表
-        async function loadLocations() {
-            try {
-                const tbody = document.getElementById('locationsBody');
-                tbody.innerHTML = '<tr><td colspan="6" class="loading"><div>加载中...</div></td></tr>';
-                
-                const locations = await getLocations();
-                
-                if (locations.length === 0) {
-                    tbody.innerHTML = `
-                        <tr>
-                            <td colspan="6" class="empty-state">
-                                <div>📭</div>
-                                <div>暂无地点数据</div>
-                            </td>
-                        </tr>
-                    `;
-                    return;
-                }
-                
-                tbody.innerHTML = locations.map(location => `
-                    <tr>
-                        <td>${escapeHtml(location.id)}</td>
-                        <td>${escapeHtml(location.name)}</td>
-                        <td>${escapeHtml(location.description)}</td>
-                        <td>${escapeHtml(location.contactPerson)}</td>
-                        <td>${escapeHtml(location.contactPhone)}</td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="action-btn edit-btn" onclick="editLocation('${location.id}')">编辑</button>
-                                <button class="action-btn delete-btn" onclick="deleteLocation('${location.id}')">删除</button>
-                            </div>
-                        </td>
-                    </tr>
-                `).join('');
-                
-            } catch (error) {
-                console.error('加载地点列表失败:', error);
-                showErrorInTable('locationsBody', '加载失败: ' + error.message);
-            }
-        }
-        
-        // 加载用户列表
-        async function loadUsers() {
-            try {
-                const tbody = document.getElementById('usersBody');
-                tbody.innerHTML = '<tr><td colspan="5" class="loading"><div>加载中...</div></td></tr>';
-                
-                const users = await getUsers();
-                
-                if (users.length === 0) {
-                    tbody.innerHTML = `
-                        <tr>
-                            <td colspan="5" class="empty-state">
-                                <div>📭</div>
-                                <div>暂无用户数据</div>
-                            </td>
-                        </tr>
-                    `;
-                    return;
-                }
-                
-                tbody.innerHTML = users.map(user => `
-                    <tr>
-                        <td>${escapeHtml(user.username)}</td>
-                        <td>${escapeHtml(user.name)}</td>
-                        <td>${user.role === 'admin' ? '管理员' : '管理用户'}</td>
-                        <td>${formatDateTime(user.createdAt)}</td>
-                        <td>
-                            <div class="action-buttons">
-                                <button class="action-btn edit-btn" onclick="editUser('${user.username}')">编辑</button>
-                                <button class="action-btn delete-btn" onclick="deleteUser('${user.username}')">删除</button>
-                            </div>
-                        </td>
-                    </tr>
-                `).join('');
-                
-            } catch (error) {
-                console.error('加载用户列表失败:', error);
-                showErrorInTable('usersBody', '加载失败: ' + error.message);
-            }
-        }
-        
-        // 显示添加地点模态框
-        function showAddLocationModal() {
-            editingLocationId = null;
-            document.getElementById('locationModalTitle').textContent = '添加地点';
-            document.getElementById('locationForm').reset();
-            document.getElementById('locationModal').style.display = 'block';
-        }
-        
-        // 关闭地点模态框
-        function closeLocationModal() {
-            document.getElementById('locationModal').style.display = 'none';
-        }
-        
-        // 编辑地点
-        function editLocation(locationId) {
-            // 在实际应用中，这里应该从LeanCloud获取地点详情
-            // 这里我们简单模拟一下
-            const locations = [
-                {
-                    id: 'bangongloujifang',
-                    name: '办公楼机房',
-                    description: '办公楼机房',
-                    contactPerson: '吴应胤',
-                    contactPhone: '15985364725'
-                }
-            ];
-            
-            const location = locations.find(loc => loc.id === locationId);
-            if (!location) {
-                alert('未找到该地点');
-                return;
-            }
-            
-            editingLocationId = locationId;
-            document.getElementById('locationModalTitle').textContent = '编辑地点';
-            document.getElementById('locationId').value = location.id;
-            document.getElementById('locationName').value = location.name;
-            document.getElementById('locationDescription').value = location.description || '';
-            document.getElementById('locationContactPerson').value = location.contactPerson;
-            document.getElementById('locationContactPhone').value = location.contactPhone;
-            
-            document.getElementById('locationModal').style.display = 'block';
-        }
-        
-        // 保存地点
-        async function saveLocation() {
-            try {
-                const locationId = document.getElementById('locationId').value;
-                const name = document.getElementById('locationName').value;
-                const description = document.getElementById('locationDescription').value;
-                const contactPerson = document.getElementById('locationContactPerson').value;
-                const contactPhone = document.getElementById('locationContactPhone').value;
-                
-                if (!locationId || !name || !contactPerson || !contactPhone) {
-                    alert('请填写所有必填字段');
-                    return;
-                }
-                
-                const saveBtn = document.getElementById('saveLocationBtn');
-                saveBtn.disabled = true;
-                saveBtn.textContent = '保存中...';
-                
-                // 在实际应用中，这里应该调用LeanCloud API保存地点
-                // 这里我们简单模拟一下
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                
-                alert(editingLocationId ? '地点更新成功' : '地点添加成功');
-                closeLocationModal();
-                loadLocations();
-                loadLocationOptions();
-                
-            } catch (error) {
-                console.error('保存地点失败:', error);
-                alert('保存失败: ' + error.message);
-            } finally {
-                const saveBtn = document.getElementById('saveLocationBtn');
-                saveBtn.disabled = false;
-                saveBtn.textContent = '保存';
-            }
-        }
-        
-        // 删除地点
-        async function deleteLocation(locationId) {
-            if (!confirm('确定要删除这个地点吗？此操作不可恢复。')) {
-                return;
-            }
-            
-            try {
-                // 在实际应用中，这里应该调用LeanCloud API删除地点
-                // 这里我们简单模拟一下
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                
-                alert('地点删除成功');
-                loadLocations();
-                loadLocationOptions();
-                
-            } catch (error) {
-                console.error('删除地点失败:', error);
-                alert('删除失败: ' + error.message);
-            }
-        }
-        
-        // 显示添加用户模态框
-        function showAddUserModal() {
-            editingUsername = null;
-            document.getElementById('userModalTitle').textContent = '添加用户';
-            document.getElementById('userForm').reset();
-            document.getElementById('userModal').style.display = 'block';
-        }
-        
-        // 关闭用户模态框
-        function closeUserModal() {
-            document.getElementById('userModal').style.display = 'none';
-        }
-        
-        // 编辑用户
-        function editUser(username) {
-            const user = ADMIN_USERS.find(u => u.username === username);
-            if (!user) {
-                alert('未找到该用户');
-                return;
-            }
-            
-            editingUsername = username;
-            document.getElementById('userModalTitle').textContent = '编辑用户';
-            document.getElementById('userUsername').value = user.username;
-            document.getElementById('userPassword').value = user.password;
-            document.getElementById('userName').value = user.name;
-            document.getElementById('userRole').value = user.role;
-            
-            document.getElementById('userModal').style.display = 'block';
-        }
-        
-        // 保存用户
-        async function saveUser() {
-            try {
-                const username = document.getElementById('userUsername').value;
-                const password = document.getElementById('userPassword').value;
-                const name = document.getElementById('userName').value;
-                const role = document.getElementById('userRole').value;
-                
-                if (!username || !password || !name || !role) {
-                    alert('请填写所有必填字段');
-                    return;
-                }
-                
-                const saveBtn = document.getElementById('saveUserBtn');
-                saveBtn.disabled = true;
-                saveBtn.textContent = '保存中...';
-                
-                // 在实际应用中，这里应该调用LeanCloud API保存用户
-                // 这里我们简单模拟一下
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                
-                alert(editingUsername ? '用户更新成功' : '用户添加成功');
-                closeUserModal();
-                loadUsers();
-                
-            } catch (error) {
-                console.error('保存用户失败:', error);
-                alert('保存失败: ' + error.message);
-            } finally {
-                const saveBtn = document.getElementById('saveUserBtn');
-                saveBtn.disabled = false;
-                saveBtn.textContent = '保存';
-            }
-        }
-        
-        // 删除用户
-        async function deleteUser(username) {
-            if (!confirm('确定要删除这个用户吗？此操作不可恢复。')) {
-                return;
-            }
-            
-            try {
-                // 在实际应用中，这里应该调用LeanCloud API删除用户
-                // 这里我们简单模拟一下
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                
-                alert('用户删除成功');
-                loadUsers();
-                
-            } catch (error) {
-                console.error('删除用户失败:', error);
-                alert('删除失败: ' + error.message);
-            }
-        }
-        
-        // 在表格中显示错误
-        function showErrorInTable(tableBodyId, message) {
-            const tbody = document.getElementById(tableBodyId);
-            tbody.innerHTML = `<tr><td colspan="10" class="empty-state"><div>❌ ${message}</div></td></tr>`;
         }
         
         // 工具函数：格式化日期时间
