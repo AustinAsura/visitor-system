@@ -162,7 +162,7 @@
             color: #e74c3c;
         }
         /* 只读输入框样式 */
-        input[read-only] {
+        input[readonly] {
             background-color: #f5f5f5 !important;
             color: #666 !important;
             cursor: not-allowed;
@@ -436,7 +436,7 @@
             });
 
             // 确保对接人员字段保持只读
-            document.getElementById('contactPerson').readonly = true;
+            document.getElementById('contactPerson').readOnly = true;
         }
 
         // 显示消息
@@ -552,6 +552,8 @@
                     const locationId = document.getElementById('location').value;
                     const location = getLocationById(locationId);
                     document.getElementById('contactPerson').value = location.contactPerson;
+                    document.getElementById('contactPerson').setAttribute('data-contact-phone', location.contactPhone);
+                    document.getElementById('contactPerson').readOnly = true;
                 } else {
                     throw new Error(result.message);
                 }
