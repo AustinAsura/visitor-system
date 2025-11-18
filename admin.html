@@ -383,6 +383,49 @@
                 }
             });
         });
+
+            // 筛选今日记录
+            function filterTodayRecords() {
+                // 设置今日日期
+                const today = new Date();
+                const todayString = today.toISOString().split('T')[0];
+                document.getElementById('dateFilter').value = todayString;
+                
+                // 重置其他筛选条件
+                document.getElementById('locationFilter').value = 'all';
+                document.getElementById('searchFilter').value = '';
+                
+                // 加载数据
+                loadData();
+                
+                // 给用户一个视觉反馈
+                const todayCard = document.getElementById('todayRecords').parentElement;
+                todayCard.style.background = '#f0f8ff';
+                setTimeout(() => {
+                    todayCard.style.background = 'white';
+                }, 500);
+            }
+
+            // 更新统计信息
+            async function updateStats() {
+                try {
+                    const stats = await getStats();
+                    
+                    document.getElementById('totalRecords').textContent = stats.totalRecords;
+                    document.getElementById('todayRecords').textContent = stats.todayRecords;
+                    document.getElementById('locationCount').textContent = stats.locationCount;
+                    
+                    // 确保今日记录卡片可点击
+                    const todayCard = document.getElementById('todayRecords').parentElement;
+                    if (!todayCard.classList.contains('clickable')) {
+                        todayCard.classList.add('clickable');
+                        todayCard.addEventListener('click', filterTodayRecords);
+                    }
+                    
+                } catch (error) {
+                    console.error('更新统计失败:', error);
+                }
+            }
         
         // 加载数据
         async function loadData() {
@@ -477,49 +520,6 @@
         
             // 按创建时间倒序排列
             query.descending('createdAt');
-
-            // 筛选今日记录
-            function filterTodayRecords() {
-                // 设置今日日期
-                const today = new Date();
-                const todayString = today.toISOString().split('T')[0];
-                document.getElementById('dateFilter').value = todayString;
-                
-                // 重置其他筛选条件
-                document.getElementById('locationFilter').value = 'all';
-                document.getElementById('searchFilter').value = '';
-                
-                // 加载数据
-                loadData();
-                
-                // 给用户一个视觉反馈
-                const todayCard = document.getElementById('todayRecords').parentElement;
-                todayCard.style.background = '#f0f8ff';
-                setTimeout(() => {
-                    todayCard.style.background = 'white';
-                }, 500);
-            }
-
-            // 更新统计信息
-            async function updateStats() {
-                try {
-                    const stats = await getStats();
-                    
-                    document.getElementById('totalRecords').textContent = stats.totalRecords;
-                    document.getElementById('todayRecords').textContent = stats.todayRecords;
-                    document.getElementById('locationCount').textContent = stats.locationCount;
-                    
-                    // 确保今日记录卡片可点击
-                    const todayCard = document.getElementById('todayRecords').parentElement;
-                    if (!todayCard.classList.contains('clickable')) {
-                        todayCard.classList.add('clickable');
-                        todayCard.addEventListener('click', filterTodayRecords);
-                    }
-                    
-                } catch (error) {
-                    console.error('更新统计失败:', error);
-                }
-            }
         
             // 分页
             const page = filters.page || 1;
