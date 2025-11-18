@@ -303,8 +303,6 @@ function setupLocation() {
     // 设置对接人员信息（自动填写且不可更改）
     document.getElementById('contactPerson').value = location.contactPerson;
     document.getElementById('contactPerson').readonly = true;
-    document.getElementById('contactPerson').style.background = '#f5f5f5';
-    document.getElementById('contactPerson').style.color = '#666';
 
     // 存储对接人员电话用于弹窗显示
     document.getElementById('contactPerson').setAttribute('data-contact-phone', location.contactPhone);
@@ -339,6 +337,8 @@ function getLocationById(locationId) {
     return location || {
         id: 'unknown',
         name: '未知地点：' + locationId,
-        description: '请检查地点参数'
+        description: '请检查地点参数',
+        contactPerson: '管理员',
+        contactPhone: '00000000000'
     };
 }
