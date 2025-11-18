@@ -3,7 +3,9 @@ const LOCATIONS = [
     {
         id: 'bangongloujifang',
         name: '办公楼机房',
-        description: '办公楼机房'
+        description: '办公楼机房',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
     },
     {
         id: 'linanyiban_dianchiyian',
@@ -238,11 +240,31 @@ const LOCATIONS = [
 ];
 
 // 根据ID获取地点信息
-function getLocationById(locationId) {
-    return LOCATIONS.find(loc => loc.id === locationId) || {
+function getLocationById(locationId){
+    // 先尝试精确匹配
+    let location = LOCATIONS.find(loc => loc.id === locationId);
+
+    // 如果没找到，尝试模糊匹配（处理大小写问题）
+    if (!location) {
+        location = LOCATIONS.find(loc => 
+            loc.id.toLowerCase() === locationId.toLowerCase()
+        );
+    }
+
+    // 如果还没找到，尝试包含匹配
+    if (!location) {
+        location = LOCATIONS.find(loc => 
+            locationId.toLowerCase().includes(loc.id.toLowerCase()) ||
+            loc.name.includes(locationId)
+        );
+    }
+
+    return location || {
         id: 'unknown',
-        name: '未知地点',
-        description: '未知登记点'
+        name: '未知地点：' + locationId,
+        description: '请检查地点参数',
+        contactPerson: '管理员',
+        contactPhone: '00000000000'
     };
 }
 
@@ -277,12 +299,22 @@ function setupLocation() {
     document.getElementById('location').value = location.id;
     document.getElementById('locationName').value = location.name;
     document.getElementById('locationDisplay').textContent = location.name;
+
+    // 设置对接人员信息（自动填写且不可更改）
+    document.getElementById('contactPerson').value = location.contactPerson;
+    document.getElementById('contactPerson').readonly = true;
+    document.getElementById('contactPerson').style.background = '#f5f5f5';
+    document.getElementById('contactPerson').style.color = '#666';
+
+    // 存储对接人员电话用于弹窗显示
+    document.getElementById('contactPerson').setAttribute('data-contact-phone', location.contactPhone);
     
     if (location.description) {
         document.getElementById('locationDisplay').title = location.description;
     }
     
     console.log('成功设置地点:', location.name);
+    console.log('对接人员:', location.contactPerson, '联系电话:', location.contactPhone);
 }
 
 function getLocationById(locationId) {
