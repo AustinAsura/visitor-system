@@ -123,8 +123,8 @@ const LOCATIONS = [
         id: 'laorongliu',
         name: '老熔硫',
         description: '老熔硫',
-        contactPerson: '吴应胤',
-        contactPhone : '15985364725'
+        contactPerson: '余海森',
+        contactPhone : '15329636526'
     },
     {
         id: 'zhiliuban',
