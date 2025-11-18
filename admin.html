@@ -107,12 +107,30 @@
             flex-wrap: wrap;
             gap: 15px;
         }
-        .header h1 { 
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+        .logo {
+            height: 60px;
+            max-width: 200px;
+            object-fit: contain;
+        }
+        .header-text {
+            flex: 1;
+        }
+        .header-text h1 { 
             color: #2c3e50; 
             margin-bottom: 5px;
             font-size: 24px;
         }
-        .header p { 
+        .header-text p { 
             color: #7f8c8d; 
             font-size: 14px;
         }
@@ -299,12 +317,20 @@
                 flex-direction: column;
                 align-items: flex-start;
             }
+            .header-left {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
             .filter-row {
                 flex-direction: column;
                 align-items: flex-start;
             }
             input, select {
                 min-width: 100%;
+            }
+            .logo {
+                height: 50px;
             }
         }
     </style>
@@ -334,9 +360,14 @@
     <div class="container" id="adminContainer">
         <div class="admin-content" id="adminContent">
             <div class="header">
-                <div>
-                    <h1>外来人员访问信息记录管理系统</h1>
-                    <p>实时监控和管理所有访客登记信息</p>
+                <div class="header-left">
+                    <div class="logo-container">
+                        <img src="Logo.png" alt="贵州磷化集团" class="logo">
+                    </div>
+                    <div class="header-text">
+                        <h1>外来人员访问信息记录管理系统</h1>
+                        <p>实时监控和管理所有访客登记信息</p>
+                    </div>
                 </div>
                 <div class="user-info">
                     <span class="user-name" id="currentUserName">管理员</span>
@@ -480,8 +511,8 @@
     <script>
         // 用户管理配置
         const ADMIN_USERS = [
-            { username: 'admin', password: 'Aa123456', name: '系统管理员' }
-            //{ username: 'manager', password: 'manager123', name: '管理用户' }
+            { username: 'admin', password: 'admin123', name: '系统管理员' },
+            { username: 'manager', password: 'manager123', name: '管理用户' }
         ];
         
         // 页面加载完成后初始化
