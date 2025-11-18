@@ -161,6 +161,14 @@
             content: " *";
             color: #e74c3c;
         }
+        /* 只读输入框样式 */
+        input[readonly] {
+            background-color: #f5f5f5 !important;
+            color: #666 !important;
+            cursor: not-allowed;
+            border-color: #d1d5db !important;
+        }
+        /* 弹窗样式 */
         .modal {
             display: none;
             position: fixed;
@@ -245,13 +253,6 @@
             background: linear-gradient(135deg, #2980b9, #3498db);
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
-        }
-        /* 只读输入框样式 */
-        input[readonly] {
-            background-color: #f5f5f5 !important;
-            color: #666 !important;
-            cursor: not-allowed;
-            border-color: #d1d5db !important;
         }
     </style>
 </head>
@@ -359,7 +360,7 @@
                 </div>
                 <button class="modal-close-btn" onclick="closeSuccessModal()">确定</button>
             </div>
-</div>
+        </div>
     </div>
 
     <!-- 引入 LeanCloud SDK -->
@@ -433,6 +434,9 @@
                 if (this.value < 1) this.value = 1;
                 if (this.value > 50) this.value = 50;
             });
+
+            // 确保对接人员字段保持只读
+            document.getElementById('contactPerson').readonly = true;
         }
 
         // 显示消息
@@ -539,7 +543,7 @@
 
                     // 显示成功弹窗
                     showSuccessModal(contactPerson, contactPhone);
-                    showMessage('✅ ' + result.message, 'success');
+                    //showMessage('✅ ' + result.message, 'success');
                     // 清空表单，但保留地点信息和默认时间
                     this.reset();
                     setupForm(); // 重新设置默认值
