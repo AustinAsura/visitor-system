@@ -17,18 +17,19 @@
             max-width: 1400px; 
             margin: 0 auto; 
         }
-        /* 登陆页面样式 */
+        
+        /* 登录页面样式 */
         .login-container {
             max-width: 400px;
             margin: 100px auto;
             background: white;
             padding: 30px;
             border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
         .login-header {
             text-align: center;
-            margin-bottom: 10px;
+            margin-bottom: 30px;
         }
         .login-header h1 {
             color: #2c3e50;
@@ -89,7 +90,7 @@
             color: #721c24;
             border: 1px solid #f5c6cb;
         }
-
+        
         /* 管理页面样式 */
         .admin-content {
             display: none;
@@ -286,11 +287,11 @@
             cursor: pointer;
             transition: all 0.3s ease;
         }
-        。stat-card.clickable:hover{
+        .stat-card.clickable:hover {
             transform: translateY(-3px);
             box-shadow: 0 6px 16px rgba(0,0,0,0.1);
         }
-        .stat-card.clickable:active{
+        .stat-card.clickable:active {
             transform: translateY(-1px);
         }
         @media (max-width: 768px) {
@@ -310,7 +311,7 @@
 </head>
 <body>
     <!-- 登录页面 -->
-     <div class="login-container" id="loginContainer">
+    <div class="login-container" id="loginContainer">
         <div class="login-header">
             <h1>管理系统登录</h1>
             <p>外来人员访问信息记录管理系统</p>
@@ -327,8 +328,8 @@
             <button type="submit" class="login-btn">登录</button>
         </form>
         <div class="login-message" id="loginMessage"></div>
-     </div>
-
+    </div>
+    
     <!-- 管理页面 -->
     <div class="container" id="adminContainer">
         <div class="admin-content" id="adminContent">
@@ -471,7 +472,6 @@
         </div>
     </div>
 
-
     <!-- 引入 LeanCloud SDK -->
     <script src="https://cdn.jsdelivr.net/npm/leancloud-storage@4.13.2/dist/av-min.js"></script>
     <script src="locations.js"></script>
@@ -479,52 +479,53 @@
     
     <script>
         // 用户管理配置
-        const ADMIN_USER = [
-        { username: 'admin', password:'Aa123456', name:'系统管理员'}
+        const ADMIN_USERS = [
+            { username: 'admin', password: 'admin123', name: '系统管理员' },
+            { username: 'manager', password: 'manager123', name: '管理用户' }
         ];
-
+        
         // 页面加载完成后初始化
         document.addEventListener('DOMContentLoaded', function() {
             // 检查是否已登录
             checkLoginStatus();
-
+            
             // 绑定登录表单提交事件
-            document.getElementById('loginForm').addEventListener('submit', function(e){
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
                 e.preventDefault();
                 login();
             });
         });
-
+        
         // 检查登录状态
-        function checkLoginStatus(){
+        function checkLoginStatus() {
             const currentUser = localStorage.getItem('adminUser');
-            if (currentUser){
+            if (currentUser) {
                 showAdminPage(JSON.parse(currentUser));
             } else {
                 showLoginPage();
             }
         }
-
+        
         // 显示登录页面
-        function showLoginPage(){
+        function showLoginPage() {
             document.getElementById('loginContainer').style.display = 'block';
             document.getElementById('adminContainer').style.display = 'none';
         }
-
+        
         // 显示管理页面
-        function showAdminPage(user){
+        function showAdminPage(user) {
             document.getElementById('loginContainer').style.display = 'none';
             document.getElementById('adminContainer').style.display = 'block';
             document.getElementById('adminContent').style.display = 'block';
             document.getElementById('currentUserName').textContent = user.name;
-
+            
             // 初始化 LeanCloud
             const initSuccess = initLeanCloud();
             if (!initSuccess) {
                 showError('系统初始化失败，请刷新页面重试');
                 return;
             }
-
+            
             // 为今日记录卡片添加点击事件
             document.getElementById('todayRecords').parentElement.classList.add('clickable');
             document.getElementById('todayRecords').parentElement.addEventListener('click', function(){
@@ -548,83 +549,83 @@
                 }
             });
         }
-
+        
         // 登录功能
-        function login(){
+        function login() {
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             const messageDiv = document.getElementById('loginMessage');
-
+            
             // 验证用户名和密码
-            const user = ADMIN_USER.find(u => u.username === username && u.password === password);
-
+            const user = ADMIN_USERS.find(u => u.username === username && u.password === password);
+            
             if (user) {
                 // 登录成功
                 localStorage.setItem('adminUser', JSON.stringify(user));
-                showAdminPage();
+                showAdminPage(user);
             } else {
                 // 登录失败
                 messageDiv.textContent = '用户名或密码错误';
                 messageDiv.className = 'login-message error';
                 messageDiv.style.display = 'block';
-
+                
                 // 3秒后隐藏错误信息
                 setTimeout(() => {
                     messageDiv.style.display = 'none';
                 }, 3000);
             }
         }
-
+        
         // 退出登录
-        function logout(){
+        function logout() {
             localStorage.removeItem('adminUser');
             showLoginPage();
             // 清空表单
             document.getElementById('loginForm').reset();
         }
-
-            // 筛选今日记录
-            function filterTodayRecords() {
-                // 设置今日日期
-                const today = new Date();
-                const todayString = today.toISOString().split('T')[0];
-                document.getElementById('dateFilter').value = todayString;
+        
+        // 筛选今日记录
+        function filterTodayRecords() {
+            // 设置今日日期
+            const today = new Date();
+            const todayString = today.toISOString().split('T')[0];
+            document.getElementById('dateFilter').value = todayString;
+            
+            // 重置其他筛选条件
+            document.getElementById('locationFilter').value = 'all';
+            document.getElementById('searchFilter').value = '';
+            
+            // 加载数据
+            loadData();
+            
+            // 给用户一个视觉反馈
+            const todayCard = document.getElementById('todayRecords').parentElement;
+            todayCard.style.background = '#f0f8ff';
+            setTimeout(() => {
+                todayCard.style.background = 'white';
+            }, 500);
+        }
+        
+        // 更新统计信息
+        async function updateStats() {
+            try {
+                const stats = await getStats();
                 
-                // 重置其他筛选条件
-                document.getElementById('locationFilter').value = 'all';
-                document.getElementById('searchFilter').value = '';
+                document.getElementById('totalRecords').textContent = stats.totalRecords;
+                document.getElementById('todayRecords').textContent = stats.todayRecords;
+                document.getElementById('locationCount').textContent = stats.locationCount;
                 
-                // 加载数据
-                loadData();
-                
-                // 给用户一个视觉反馈
+                // 确保今日记录卡片可点击
                 const todayCard = document.getElementById('todayRecords').parentElement;
-                todayCard.style.background = '#f0f8ff';
-                setTimeout(() => {
-                    todayCard.style.background = 'white';
-                }, 500);
-            }
-
-            // 更新统计信息
-            async function updateStats() {
-                try {
-                    const stats = await getStats();
-                    
-                    document.getElementById('totalRecords').textContent = stats.totalRecords;
-                    document.getElementById('todayRecords').textContent = stats.todayRecords;
-                    document.getElementById('locationCount').textContent = stats.locationCount;
-                    
-                    // 确保今日记录卡片可点击
-                    const todayCard = document.getElementById('todayRecords').parentElement;
-                    if (!todayCard.classList.contains('clickable')) {
-                        todayCard.classList.add('clickable');
-                        todayCard.addEventListener('click', filterTodayRecords);
-                    }
-                    
-                } catch (error) {
-                    console.error('更新统计失败:', error);
+                if (!todayCard.classList.contains('clickable')) {
+                    todayCard.classList.add('clickable');
+                    todayCard.addEventListener('click', filterTodayRecords);
                 }
+                
+            } catch (error) {
+                console.error('更新统计失败:', error);
             }
+        }
         
         // 加载数据
         async function loadData() {
@@ -662,7 +663,6 @@
             }
         }
         
-
         // 在 leancloud.js 中修复 getVisitorRecords 函数
         async function getVisitorRecords(filters = {}) {
             try {
