@@ -302,7 +302,7 @@ function setupLocation() {
 
     // 设置对接人员信息（自动填写且不可更改）
     document.getElementById('contactPerson').value = location.contactPerson;
-    document.getElementById('contactPerson').readonly = true;
+    document.getElementById('contactPerson').readOnly = true;
 
     // 存储对接人员电话用于弹窗显示
     document.getElementById('contactPerson').setAttribute('data-contact-phone', location.contactPhone);
