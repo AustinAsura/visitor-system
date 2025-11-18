@@ -17,6 +17,83 @@
             max-width: 1400px; 
             margin: 0 auto; 
         }
+        /* 登陆页面样式 */
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        .login-header {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .login-header h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .login-header p {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        .login-form .form-group {
+            margin-bottom: 20px;
+        }
+        .login-form label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+        .login-form input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        .login-form input:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .login-btn:hover {
+            background: #2980b9;
+            transform: translateY(-1px);
+        }
+        .login-message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            display: none;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* 管理页面样式 */
+        .admin-content {
+            display: none;
+        }
         .header { 
             background: white; 
             padding: 25px 30px; 
@@ -37,6 +114,28 @@
         .header p { 
             color: #7f8c8d; 
             font-size: 14px;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .user-name {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        .logout-btn {
+            padding: 8px 16px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.3s;
+        }
+        .logout-btn:hover {
+            background: #c0392b;
         }
         .stats { 
             display: grid; 
@@ -184,8 +283,8 @@
         }
         /* 添加可点击的统计卡片样式 */
         .stat-card.clickable {
-        cursor: pointer;
-        transition: all 0.3s ease;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
         。stat-card.clickable:hover{
             transform: translateY(-3px);
@@ -210,140 +309,168 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <div>
-                <h1>外来人员访问信息记录管理系统</h1>
-                <p>实时监控和管理所有访客登记信息</p>
-            </div>
-            <button class="btn btn-success" onclick="exportData()">
-                <span>📊</span> 导出Excel
-            </button>
+    <!-- 登录页面 -->
+     <div class="login-container" id="loginContainer">
+        <div class="login-header">
+            <h1>管理系统登录</h1>
+            <p>外来人员访问信息记录管理系统</p>
         </div>
-        
-        <div class="stats">
-            <div class="stat-card">
-                <div class="stat-number" id="totalRecords">0</div>
-                <div class="stat-label">总记录数</div>
+        <form class="login-form" id="loginForm">
+            <div class="form-group">
+                <label for="username">用户名</label>
+                <input type="text" id="username" name="username" required placeholder="请输入用户名">
             </div>
-            <div class="stat-card">
-                <div class="stat-number" id="todayRecords">0</div>
-                <div class="stat-label">今日记录</div>
+            <div class="form-group">
+                <label for="password">密码</label>
+                <input type="password" id="password" name="password" required placeholder="请输入密码">
             </div>
-            <div class="stat-card">
-                <div class="stat-number" id="locationCount">0</div>
-                <div class="stat-label">登记地点</div>
-            </div>
-        </div>
-        
-        <div class="filters">
-            <div class="filter-row">
-                <div class="form-group">
-                    <label>地点筛选</label>
-                    <select id="locationFilter">
-                        <option value="all">全部地点</option>
-                        <option value="bangongloujifang">办公楼机房</option>
-                        <option value="linanyiban_dianchiyian">电池一铵</option>
-                        <option value="linanyiban_a">磷铵一班A系列</option>
-                        <option value="linanyiban_b">磷铵一班B系列</option>
-                        <option value="linanerban_1">磷铵二班一系列</option>
-                        <option value="linanerban_2">磷铵二班二系列</option>
-                        <option value="linansanban">30万吨</option>
-                        <option value="linanerban_guanqu">磷铵二班浓酸罐区</option>
-                        <option value="linansiban_1">磷铵四班一系列</option>
-                        <option value="linansiban_2">磷铵四班二系列</option>
-                        <option value="linansiban_guanqu">磷铵四班浓酸罐区</option>
-                        <option value="gonganban">供氨班氨站</option>
-                        <option value="liusuanyiban_yurefadian12">余热发电1#2#机组</option>
-                        <option value="liusuanyiban_yurefadian3">余热发电3#机组</option>
-                        <option value="liusuanyiban_ab">硫酸一班AB套</option>
-                        <option value="liusuanyiban_abfengji">硫酸一班AB套风机房</option>
-                        <option value="liusuanyiban_c">硫酸一班C套</option>
-                        <option value="laorongliu">老熔硫</option>
-                        <option value="zhiliuban">制硫班</option>
-                        <option value="liusuanyiban_jifang">硫酸一班机房</option>
-                        <option value="liusuanerban_yurefadian">硫酸二班余热发电</option>
-                        <option value="liusuanerban_yuyafadian">硫酸二班余压发电</option>
-                        <option value="liusuanerban_xunhuanshui">硫酸二班循环水</option>
-                        <option value="liusuanerban_ab">硫酸二班AB套</option>
-                        <option value="liusuanerban_abfengji">硫酸二班AB套风机房</option>
-                        <option value="liusuanerban_guanqu">硫酸二班稀酸罐区</option>
-                        <option value="linsuanyiban_nongsuo1">磷酸一班浓缩一</option>
-                        <option value="linsuanyiban_nongsuo2">磷酸一班浓缩二</option>
-                        <option value="fuyan">氟盐</option>
-                        <option value="linsuanyiban_jifang">磷酸一班机房</option>
-                        <option value="linsuanyiban_gh">磷酸一班浓缩GH套</option>
-                        <option value="linsuanyiban_guolv1">磷酸一班过滤一</option>
-                        <option value="linsuanyiban_guolv2">磷酸一班过滤二</option>
-                        <option value="linsuanyiban_dianhuishou">碘回收</option>
-                        <option value="linsuanerban_guolv12">磷酸二班过滤一二</option>
-                        <option value="linsuanerban_nongsuo1">磷酸二班浓缩一</option>
-                        <option value="linsuanerban_nongsuo2">磷酸二班浓缩二</option>
-                        <option value="yuanliao_1">原料一</option>
-                        <option value="fuxuan">浮选</option>
-                        <option value="yuanliao_2">原料二</option>
-                        <option value="taociguolv_3">三期陶瓷过滤</option>
-                        <option value="tuoyanshui">脱盐水</option>
-                        <option value="tuoyanshui_reshuifadian">脱盐水热水发电</option>
-                        <option value="dcp">DCP</option>
-                        <option value="xinwushuizhan">新污水站</option>
-                        <option value="shengchanshuichang">生产水厂</option>
-                        <option value="liulinjifang">硫磷综合楼机房</option>
-                    </select>
+            <button type="submit" class="login-btn">登录</button>
+        </form>
+        <div class="login-message" id="loginMessage"></div>
+     </div>
+
+    <!-- 管理页面 -->
+    <div class="container" id="adminContainer">
+        <div class="admin-content" id="adminContent">
+            <div class="header">
+                <div>
+                    <h1>外来人员访问信息记录管理系统</h1>
+                    <p>实时监控和管理所有访客登记信息</p>
                 </div>
-                
-                <div class="form-group">
-                    <label>日期筛选</label>
-                    <input type="date" id="dateFilter">
-                </div>
-                
-                <div class="form-group">
-                    <label>关键词搜索</label>
-                    <input type="text" id="searchFilter" placeholder="姓名、手机、单位等">
-                </div>
-                
-                <div class="form-group">
-                    <button class="btn" onclick="loadData()">
-                        <span>🔍</span> 搜索
-                    </button>
-                    <button class="btn btn-secondary" onclick="resetFilters()">
-                        <span>🔄</span> 重置
+                <div class="user-info">
+                    <span class="user-name" id="currentUserName">管理员</span>
+                    <button class="logout-btn" onclick="logout()">退出登录</button>
+                    <button class="btn btn-success" onclick="exportData()">
+                        <span>📊</span> 导出Excel
                     </button>
                 </div>
             </div>
-        </div>
-        
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>登记时间</th>
-                        <th>工作单位</th>
-                        <th>姓名</th>
-                        <th>身份证号</th>
-                        <th>到访人数</th>
-                        <th>来访时间</th>
-                        <th>来访目的</th>
-                        <th>联系方式</th>
-                        <th>对接人员</th>
-                        <th>登记地点</th>
-                    </tr>
-                </thead>
-                <tbody id="recordsBody">
-                    <tr>
-                        <td colspan="10" class="loading">
-                            <div>加载中...</div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        
-        <div class="last-update">
-            最后更新: <span id="lastUpdateText">--</span>
-            <button class="refresh-btn" onclick="loadData()" title="刷新数据">🔄</button>
+            
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalRecords">0</div>
+                    <div class="stat-label">总记录数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="todayRecords">0</div>
+                    <div class="stat-label">今日记录</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="locationCount">0</div>
+                    <div class="stat-label">登记地点</div>
+                </div>
+            </div>
+            
+            <div class="filters">
+                <div class="filter-row">
+                    <div class="form-group">
+                        <label>地点筛选</label>
+                        <select id="locationFilter">
+                            <option value="all">全部地点</option>
+                            <option value="bangongloujifang">办公楼机房</option>
+                            <option value="linanyiban_dianchiyian">电池一铵</option>
+                            <option value="linanyiban_a">磷铵一班A系列</option>
+                            <option value="linanyiban_b">磷铵一班B系列</option>
+                            <option value="linanerban_1">磷铵二班一系列</option>
+                            <option value="linanerban_2">磷铵二班二系列</option>
+                            <option value="linansanban">30万吨</option>
+                            <option value="linanerban_guanqu">磷铵二班浓酸罐区</option>
+                            <option value="linansiban_1">磷铵四班一系列</option>
+                            <option value="linansiban_2">磷铵四班二系列</option>
+                            <option value="linansiban_guanqu">磷铵四班浓酸罐区</option>
+                            <option value="gonganban">供氨班氨站</option>
+                            <option value="liusuanyiban_yurefadian12">余热发电1#2#机组</option>
+                            <option value="liusuanyiban_yurefadian3">余热发电3#机组</option>
+                            <option value="liusuanyiban_ab">硫酸一班AB套</option>
+                            <option value="liusuanyiban_abfengji">硫酸一班AB套风机房</option>
+                            <option value="liusuanyiban_c">硫酸一班C套</option>
+                            <option value="laorongliu">老熔硫</option>
+                            <option value="zhiliuban">制硫班</option>
+                            <option value="liusuanyiban_jifang">硫酸一班机房</option>
+                            <option value="liusuanerban_yurefadian">硫酸二班余热发电</option>
+                            <option value="liusuanerban_yuyafadian">硫酸二班余压发电</option>
+                            <option value="liusuanerban_xunhuanshui">硫酸二班循环水</option>
+                            <option value="liusuanerban_ab">硫酸二班AB套</option>
+                            <option value="liusuanerban_abfengji">硫酸二班AB套风机房</option>
+                            <option value="liusuanerban_guanqu">硫酸二班稀酸罐区</option>
+                            <option value="linsuanyiban_nongsuo1">磷酸一班浓缩一</option>
+                            <option value="linsuanyiban_nongsuo2">磷酸一班浓缩二</option>
+                            <option value="fuyan">氟盐</option>
+                            <option value="linsuanyiban_jifang">磷酸一班机房</option>
+                            <option value="linsuanyiban_gh">磷酸一班浓缩GH套</option>
+                            <option value="linsuanyiban_guolv1">磷酸一班过滤一</option>
+                            <option value="linsuanyiban_guolv2">磷酸一班过滤二</option>
+                            <option value="linsuanyiban_dianhuishou">碘回收</option>
+                            <option value="linsuanerban_guolv12">磷酸二班过滤一二</option>
+                            <option value="linsuanerban_nongsuo1">磷酸二班浓缩一</option>
+                            <option value="linsuanerban_nongsuo2">磷酸二班浓缩二</option>
+                            <option value="yuanliao_1">原料一</option>
+                            <option value="fuxuan">浮选</option>
+                            <option value="yuanliao_2">原料二</option>
+                            <option value="taociguolv_3">三期陶瓷过滤</option>
+                            <option value="tuoyanshui">脱盐水</option>
+                            <option value="tuoyanshui_reshuifadian">脱盐水热水发电</option>
+                            <option value="dcp">DCP</option>
+                            <option value="xinwushuizhan">新污水站</option>
+                            <option value="shengchanshuichang">生产水厂</option>
+                            <option value="liulinjifang">硫磷综合楼机房</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>日期筛选</label>
+                        <input type="date" id="dateFilter">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>关键词搜索</label>
+                        <input type="text" id="searchFilter" placeholder="姓名、手机、单位等">
+                    </div>
+                    
+                    <div class="form-group">
+                        <button class="btn" onclick="loadData()">
+                            <span>🔍</span> 搜索
+                        </button>
+                        <button class="btn btn-secondary" onclick="resetFilters()">
+                            <span>🔄</span> 重置
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>登记时间</th>
+                            <th>工作单位</th>
+                            <th>姓名</th>
+                            <th>身份证号</th>
+                            <th>到访人数</th>
+                            <th>来访时间</th>
+                            <th>来访目的</th>
+                            <th>联系方式</th>
+                            <th>对接人员</th>
+                            <th>登记地点</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recordsBody">
+                        <tr>
+                            <td colspan="10" class="loading">
+                                <div>加载中...</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="last-update">
+                最后更新: <span id="lastUpdateText">--</span>
+                <button class="refresh-btn" onclick="loadData()" title="刷新数据">🔄</button>
+            </div>
         </div>
     </div>
+
 
     <!-- 引入 LeanCloud SDK -->
     <script src="https://cdn.jsdelivr.net/npm/leancloud-storage@4.13.2/dist/av-min.js"></script>
@@ -351,8 +478,46 @@
     <script src="leancloud-config.js"></script>
     
     <script>
+        // 用户管理配置
+        const ADMIN_USER = [
+        { username: 'admin', password:'Aa123456', name:'系统管理员'}
+        ];
+
         // 页面加载完成后初始化
         document.addEventListener('DOMContentLoaded', function() {
+            // 检查是否已登录
+            checkLoginStatus();
+
+            // 绑定登录表单提交事件
+            document.getElementById('loginForm').addEventListener('submit', function(e){
+                e.preventDefault();
+                login();
+            });
+        });
+
+        // 检查登录状态
+        function checkLoginStatus(){
+            const currentUser = localStorage.getItem('adminUser');
+            if (currentUser){
+                showAdminPage(JSON.parse(currentUser));
+            } else {
+                showLoginPage();
+            }
+        }
+
+        // 显示登录页面
+        function showLoginPage(){
+            document.getElementById('loginContainer').style.display = 'block';
+            document.getElementById('adminContainer').style.display = 'none';
+        }
+
+        // 显示管理页面
+        function showAdminPage(user){
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('adminContainer').style.display = 'block';
+            document.getElementById('adminContent').style.display = 'block';
+            document.getElementById('currentUserName').textContent = user.name;
+
             // 初始化 LeanCloud
             const initSuccess = initLeanCloud();
             if (!initSuccess) {
@@ -382,7 +547,41 @@
                     loadData();
                 }
             });
-        });
+        }
+
+        // 登录功能
+        function login(){
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const messageDiv = document.getElementById('loginMessage');
+
+            // 验证用户名和密码
+            const user = ADMIN_USER.find(u => u.username === username && u.password === password);
+
+            if (user) {
+                // 登录成功
+                localStorage.setItem('adminUser', JSON.stringify(user));
+                showAdminPage();
+            } else {
+                // 登录失败
+                messageDiv.textContent = '用户名或密码错误';
+                messageDiv.className = 'login-message error';
+                messageDiv.style.display = 'block';
+
+                // 3秒后隐藏错误信息
+                setTimeout(() => {
+                    messageDiv.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        // 退出登录
+        function logout(){
+            localStorage.removeItem('adminUser');
+            showLoginPage();
+            // 清空表单
+            document.getElementById('loginForm').reset();
+        }
 
             // 筛选今日记录
             function filterTodayRecords() {
@@ -588,20 +787,6 @@
                     <td>${escapeHtml(record.locationName)}</td>
                 </tr>
             `).join('');
-        }
-        
-        // 更新统计信息
-        async function updateStats() {
-            try {
-                const stats = await getStats();
-                
-                document.getElementById('totalRecords').textContent = stats.totalRecords;
-                document.getElementById('todayRecords').textContent = stats.todayRecords;
-                document.getElementById('locationCount').textContent = stats.locationCount;
-                
-            } catch (error) {
-                console.error('更新统计失败:', error);
-            }
         }
         
         // 更新最后更新时间
