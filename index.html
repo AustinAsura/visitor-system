@@ -370,7 +370,7 @@
     
     <script>
         // 页面加载完成后初始化
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
             // 初始化 LeanCloud
             const initSuccess = initLeanCloud();
             if (!initSuccess) {
@@ -379,7 +379,7 @@
             }
             
             // 设置地点信息
-            setupLocation();
+            await setupLocation();
             
             // 设置表单验证和默认值
             setupForm();
