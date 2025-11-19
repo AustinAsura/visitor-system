@@ -521,9 +521,9 @@
             checkLoginStatus();
             
             // 绑定登录表单提交事件
-            document.getElementById('loginForm').addEventListener('submit', function(e) {
+            document.getElementById('loginForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
-                login();
+                await login();
             });
         });
         
@@ -542,9 +542,49 @@
             document.getElementById('loginContainer').style.display = 'block';
             document.getElementById('adminContainer').style.display = 'none';
         }
+
+        // 登录功能
+        async function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const messageDiv = document.getElementById('loginMessage');
+
+            try {
+                // 从LeanCloud获取管理员账号
+                const adminUsers = await getAdminUsers();
+
+                // 验证用户名和密码
+                const user = ADMIN_USERS.find(u => u.username === username && u.password === password);
+
+                if (user) {
+                    // 登录成功
+                    localStorage.setItem('adminUser', JSON.stringify(user));
+                    showAdminPage(user);
+                } else {
+                    // 登录失败
+                    messageDiv.textContent = '用户名或密码错误';
+                    messageDiv.className = 'login-message error';
+                    messageDiv.style.display = 'block';
+
+                    // 3秒后隐藏错误信息
+                    setTimeout(() => {
+                        messageDiv.style.display = 'none';
+                    }, 3000);
+                }
+            } catch (error) {
+                console.error ('登录失败:', error);
+                messageDiv.textContent = '登录失败，请检查网络连接';
+                messageDiv.className = 'login-message error';
+                messageDiv.style.display = 'block';
+
+                setTimeout (() => {
+                    messageDiv.style.display = 'none';
+                }, 3000);
+            }
+        }
         
         // 显示管理页面
-        function showAdminPage(user) {
+        async function showAdminPage(user) {
             document.getElementById('loginContainer').style.display = 'none';
             document.getElementById('adminContainer').style.display = 'block';
             document.getElementById('adminContent').style.display = 'block';
@@ -562,6 +602,9 @@
             document.getElementById('todayRecords').parentElement.addEventListener('click', function(){
                 filterTodayRecords();
             });
+
+            // 动态加载地点筛选选项
+            await populateLocationFilter();
             
             // 加载初始数据
             loadData();
@@ -579,32 +622,54 @@
                     loadData();
                 }
             });
-        }
-        
-        // 登录功能
-        function login() {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            const messageDiv = document.getElementById('loginMessage');
-            
-            // 验证用户名和密码
-            const user = ADMIN_USERS.find(u => u.username === username && u.password === password);
-            
-            if (user) {
-                // 登录成功
-                localStorage.setItem('adminUser', JSON.stringify(user));
-                showAdminPage(user);
-            } else {
-                // 登录失败
-                messageDiv.textContent = '用户名或密码错误';
-                messageDiv.className = 'login-message error';
-                messageDiv.style.display = 'block';
-                
-                // 3秒后隐藏错误信息
-                setTimeout(() => {
-                    messageDiv.style.display = 'none';
-                }, 3000);
+
+            // 如果是超级管理员，显示配置管理按钮
+            if (user.role === 'superadmin') {
+                addConfigManagementButton();
             }
+        }
+
+        // 动态填充地点筛选选项
+        async function populateLocationFilter() {
+            const locationFilter = document.getElementById('locationFilter');
+
+            // 清空现有选项（保留"全部地点"）
+            while (locationFilter.children.length > 1) {
+                locationFilter.removeChild(locationFilter.lastChild);
+            }
+
+            try {
+                const locations = await getAllLocations();
+
+                locations.forEach(location => {
+                    if (location.enabled) {
+                        const option = document.createElement('option');
+                        option.value = location.id;
+                        option.textContent = location.name;
+                        locationFilter.appendChild(option);
+                    }
+                });
+            } catch (error) {
+                console.error('加载地点选项失败:', error);
+            }
+        }
+
+        // 添加配置管理按钮（仅超级管理员可见）
+        function addConfigManagementButton() {
+            const userInfo = document.querySelector('.user-info');
+            const configBtn = document.createElement('button');
+            configBtn.className = 'btn btn-success';
+            configBtn.innerHTML = '<span>⚙️</span> 系统配置';
+            configBtn.onclick = showConfigManagement;
+
+            userInfo.insertBefore(configBtn, userInfo.querySelector('.logout-btn'));
+        }
+
+        // 显示配置管理界面
+        function showConfigManagement() {
+            // 这里可以打开一个模态框来管理系统配置
+            alert ('系统配置功能开发中...\n可以管理:\n- 地点配置\n- 管理员账号\n- 对接人员信息');
+            // 实际实现时可以创建一个模态框来编辑这些配置
         }
         
         // 退出登录
