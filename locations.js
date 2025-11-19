@@ -1,12 +1,338 @@
 // locations.js - 地点配置
-let LOCATIONS_CACHE = [];
+const LOCATIONS = [
+    {
+        id: 'bangongloujifang',
+        name: '办公楼机房',
+        description: '办公楼机房',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'linanyiban_dianchiyian',
+        name: '电池一铵', 
+        description: '电池一铵',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'linanyiban_a',
+        name: '磷铵一班A系列',
+        description: '磷铵一班A系列',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'linanyiban_b',
+        name: '磷铵一班B系列',
+        description: '磷铵一班B系列',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'linanerban_1',
+        name: '磷铵二班一系列',
+        description: '磷铵二班一系列',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'linanerban_2',
+        name: '磷铵二班二系列',
+        description: '磷铵二班二系列',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'linansanban',
+        name: '30万吨', 
+        description: '30万吨',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'linanerban_guanqu',
+        name: '磷铵二班浓酸罐区',
+        description: '磷铵二班浓酸罐区',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'linansiban_1',
+        name: '磷铵四班一系列',
+        description: '磷铵四班一系列',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'linansiban_2',
+        name: '磷铵四班二系列',
+        description: '磷铵四班二系列',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'linansiban_guanqu',
+        name: '磷铵四班浓酸罐区',
+        description: '磷铵四班浓酸罐区',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'gonganban',
+        name: '供氨班氨站', 
+        description: '供氨班氨站',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'liusuanyiban_yurefadian12',
+        name: '余热发电1#2#机组',
+        description: '余热发电1#2#机组',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'liusuanyiban_yurefadian3',
+        name: '余热发电3#机组',
+        description: '余热发电3#机组',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'liusuanyiban_ab',
+        name: '硫酸一班AB套',
+        description: '硫酸一班AB套',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'liusuanyiban_abfengji',
+        name: '硫酸一班AB套风机房',
+        description: '硫酸一班AB套风机房',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'liusuanyiban_c',
+        name: '硫酸一班C套', 
+        description: '硫酸一班C套',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'laorongliu',
+        name: '老熔硫',
+        description: '老熔硫',
+        contactPerson: '余海森',
+        contactPhone : '15329636526'
+    },
+    {
+        id: 'zhiliuban',
+        name: '制硫班',
+        description: '制硫班',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'liusuanyiban_jifang',
+        name: '硫酸一班机房',
+        description: '硫酸一班机房',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'liusuanerban_yurefadian',
+        name: '硫酸二班余热发电',
+        description: '硫酸二班余热发电',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'liusuanerban_yuyafadian',
+        name: '硫酸二班余压发电', 
+        description: '硫酸二班余压发电',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'liusuanerban_xunhuanshui',
+        name: '硫酸二班循环水',
+        description: '硫酸二班循环水',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'liusuanerban_ab',
+        name: '硫酸二班AB套',
+        description: '硫酸二班AB套',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'liusuanerban_abfengji',
+        name: '硫酸二班AB套风机房',
+        description: '硫酸二班AB套风机房',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'liusuanerban_guanqu',
+        name: '硫酸二班稀酸罐区',
+        description: '硫酸二班稀酸罐区',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'linsuanyiban_nongsuo1',
+        name: '磷酸一班浓缩一', 
+        description: '磷酸一班浓缩一',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'linsuanyiban_nongsuo2',
+        name: '磷酸一班浓缩二',
+        description: '磷酸一班浓缩二',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'fuyan',
+        name: '氟盐',
+        description: '氟盐',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'linsuanyiban_jifang',
+        name: '磷酸一班机房',
+        description: '磷酸一班机房',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'linsuanyiban_gh',
+        name: '磷酸一班浓缩GH套',
+        description: '磷酸一班浓缩GH套',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'linsuanyiban_guolv1',
+        name: '磷酸一班过滤一', 
+        description: '磷酸一班过滤一',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'linsuanyiban_guolv2',
+        name: '磷酸一班过滤二',
+        description: '磷酸一班过滤二',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'linsuanyiban_dianhuishou',
+        name: '碘回收',
+        description: '碘回收',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'linsuanerban_guolv12',
+        name: '磷酸二班过滤一二',
+        description: '磷酸二班过滤一二',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'linsuanerban_nongsuo1',
+        name: '磷酸二班浓缩一',
+        description: '磷酸二班浓缩一',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'linsuanerban_nongsuo2',
+        name: '磷酸二班浓缩二', 
+        description: '磷酸二班浓缩二',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'yuanliao_1',
+        name: '原料一',
+        description: '原料一',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'fuxuan',
+        name: '浮选',
+        description: '浮选',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'yuanliao_2',
+        name: '原料二',
+        description: '原料二',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'taociguolv_3',
+        name: '三期陶瓷过滤',
+        description: '三期陶瓷过滤',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'tuoyanshui',
+        name: '脱盐水',
+        description: '脱盐水',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'tuoyanshui_reshuifadian',
+        name: '脱盐水热水发电',
+        description: '脱盐水热水发电',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'dcp',
+        name: 'DCP',
+        description: 'DCP',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'xinwushuizhan',
+        name: '新污水站',
+        description: '新污水站',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'shengchanshuichang',
+        name: '生产水厂',
+        description: '生产水厂',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    },
+    {
+        id: 'liulinjifang',
+        name: '硫磷综合楼机房',
+        description: '硫磷综合楼机房',
+        contactPerson: '吴应胤',
+        contactPhone : '15985364725'
+    }
+];
 
 // 根据ID获取地点信息
-async function getLocationById(locationId){
-    // 如果缓存为空，先获取地点信息
-    if (LOCATIONS_CACHE.length === 0) {
-        await loadLocations();
-    }
+function getLocationById(locationId){
     // 先尝试精确匹配
     let location = LOCATIONS.find(loc => loc.id === locationId);
 
@@ -30,31 +356,16 @@ async function getLocationById(locationId){
         name: '未知地点：' + locationId,
         description: '请检查地点参数',
         contactPerson: '管理员',
-        contactPhone: '00000000000',
-        enabled: false
+        contactPhone: '00000000000'
     };
 }
 
 // 获取所有地点
-async function getAllLocations(){
-    if (LOCATIONS_CACHE.length === 0) {
-        await loadLocations();
-    }
-    return LOCATIONS_CACHE;
+function getAllLocations(){
+    return LOCATIONS;
 }
 
-// 加载地点信息
-async function loadLocations() {
-    try {
-        LOCATIONS_CACHE = await getLocations();
-    } catch (error) {
-        console.error('加载地点信息失败:', error);
-        LOCATIONS_CACHE = [];
-    }
-}
-
-// 设置地点信息（用于登记页面）
-async function setupLocation() {
+function setupLocation() {
     const urlParams = new URLSearchParams(window.location.search);
     const locationId = urlParams.get('location');
     
@@ -68,7 +379,7 @@ async function setupLocation() {
         return;
     }
     
-    const location = await getLocationById(locationId);
+    const location = getLocationById(locationId);
     
     if (location.id === 'unknown') {
         console.error('未知地点ID:', locationId);
@@ -76,14 +387,6 @@ async function setupLocation() {
         document.getElementById('locationDisplay').style.color = 'red';
         return;
     }
-
-    if (!location.enabled) {
-        console.error ('地点已禁用:', locationId);
-        document.getElementById('locationDisplay').textContent = '错误：该地点已禁用';
-        document.getElementById('locationDisplay').style.color = 'red';
-        return;
-    }
-    
     // 设置地点信息
     document.getElementById('location').value = location.id;
     document.getElementById('locationName').value = location.name;
